@@ -1,6 +1,15 @@
 pipeline {
     agent any
     stages{
+        stage('Seeing envs and copying'){
+            steps{
+                // Any maven phase that that triggers the test phase can be used here.
+                script{
+                sh 'env'
+                sh 'cp -R /home/jenkins/wallet/ ./wallet'
+                }
+            }
+        }
         stage('Build and Test with Maven'){
             steps{
                 // Any maven phase that that triggers the test phase can be used here.
