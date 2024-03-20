@@ -9,14 +9,13 @@ pipeline {
             steps{
                 // Any maven phase that that triggers the test phase can be used here.
                 script{
-                    /*
                 sh 'export DATABASE_USER=$DB_CREDENTIALS_USR'
                 sh 'export DATABASE_PWD=$DB_CREDENTIALS_PSW'
-                    */
-                sh "export DATABASE_USER=${DATABASE_USER2}"
-                sh "export DATABASE_PWD=${DATABASE_PWD2}"
                 sh "export DIRECTORY=${DIRECTORY}"
                 sh 'cp -R /home/jenkins/wallet/ ./wallet'
+                sh 'printenv DATABASE_USER'
+                sh 'printenv DATABASE_PWD'
+                sh 'printenv DIRECTORY'
                 }
             }
         }
