@@ -13,9 +13,8 @@ pipeline {
                 sh 'export DATABASE_PWD=$DB_CREDENTIALS_PSW'
                 sh "export DIRECTORY=${DIRECTORY}"
                 sh 'cp -R /home/jenkins/wallet/ ./wallet'
-                sh 'printenv DATABASE_USER'
-                sh 'printenv DATABASE_PWD'
-                sh 'printenv DIRECTORY'
+                sh "echo DIRECTORY=${DATABASE_USER}"
+                sh "echo DIRECTORY=${DATABASE_PWD}"
                 }
             }
         }
