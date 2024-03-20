@@ -3,15 +3,10 @@ pipeline {
     stages{
         stage('Build and Test with Maven'){
             steps{
-                try {
-                    // Any maven phase that that triggers the test phase can be used here.
-                    script{
-                    sh 'mvn clean'
-                    sh 'mvn verify'
-                    }
-                } catch(err) {
-                    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
-                    throw err
+                // Any maven phase that that triggers the test phase can be used here.
+                script{
+                sh 'mvn clean'
+                sh 'mvn verify'
                 }
             }
         }
