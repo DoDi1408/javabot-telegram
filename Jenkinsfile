@@ -20,7 +20,6 @@ pipeline {
             steps{
                 // Any maven phase that that triggers the test phase can be used here.
                 script{
-                sh 'mvn clean'
                 sh 'mvn verify'
                 }
             }
