@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         DB_CREDENTIALS = credentials('autonomous_database_credentials')
+        OCI_CREDENTIALS = credentials('oci-user-authtoken')
         DIRECTORY = '/home/jenkins/wallet'
     }
     stages{
@@ -16,9 +17,9 @@ pipeline {
         }
         stage('Build and Test with Maven'){
             steps{
-                // Any maven phase that that triggers the test phase can be used here.
+                // Using maven verify since it tests and builds a jar
                 script{
-                sh 'mvn verify'
+                sh 'mvn clean verify'
                 }
             }
         }
@@ -27,6 +28,20 @@ pipeline {
                 script{
                     sh 'docker build -t javabot-image .'
                 }
+            }
+        }
+        stage('Push image to OCI Container Registry'){
+            steps{
+                script{
+                    sh 'docker login -u ${OCI_CREDENTIALS_USR} -p ${OCI_CREDENTIALS_PSW} qro.ocir.io'
+                    sh 'docker tag javabot-image:latest qro.ocir.io/ax6svbbnc2oh/registry-java-bot:latest'
+                    sh 'docker push qro.ocir.io/ax6svbbnc2oh/registry-java-bot:latest'
+                }
+            }
+        }
+        stage('Cleanup'){
+            steps{
+                cleanWs()
             }
         }
     }
