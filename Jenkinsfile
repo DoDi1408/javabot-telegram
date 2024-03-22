@@ -42,7 +42,7 @@ pipeline {
         stage('Cleanup'){
             steps{
                 script{
-                    sh 'rm /home/jenkins/.docker/config.json.'
+                    sh 'rm /home/jenkins/.docker/config.json'
                     sh 'docker logout'
                 }
                 cleanWs()
