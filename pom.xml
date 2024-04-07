@@ -15,11 +15,6 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-compiler-plugin</artifactId>
-			<version>3.13.0</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -62,7 +57,7 @@
 			<artifactId>oraclepki</artifactId>
 			<version>21.1.0.0</version>
 		</dependency>
-		</dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -70,14 +65,24 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-		<plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-			<configuration>
-				<failIfNoTests>true</failIfNoTests>
-			</configuration>
-            <version>3.1.2</version>
-        </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<failIfNoTests>true</failIfNoTests>
+				</configuration>
+				<version>3.1.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.13.0</version>
+				<configuration>
+					<!-- put your configurations here -->
+					<source>17</source>
+					<target>17</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
