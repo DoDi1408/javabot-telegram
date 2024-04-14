@@ -10,9 +10,10 @@ pipeline {
             steps{
                 // Any maven phase that that triggers the test phase can be used here.
                 script{
-                    sh 'whoami'
                     sh 'echo $PATH'
-                    sh 'export PATH="/home/jenkins/bin:$PATH"'
+                    sh 'exec bash'
+                    sh 'echo $PATH'
+                    sh 'oci -version'
                     sh "export DIRECTORY=${DIRECTORY}"
                     sh 'cp -R /home/jenkins/wallet/ ./wallet'
                 }
