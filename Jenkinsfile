@@ -9,11 +9,7 @@ pipeline {
     stages{
         stage('Setting envs and copying'){
             steps{
-                // Any maven phase that that triggers the test phase can be used here.
                 script{
-                    sh 'echo $PATH'
-                    sh '/home/jenkins/bin/oci -version'
-                    sh 'oci -version'
                     sh "export DIRECTORY=${DIRECTORY}"
                     sh 'cp -R /home/jenkins/wallet/ ./wallet'
                 }
@@ -46,7 +42,7 @@ pipeline {
         stage('Push to cluster'){
             steps{
                 script{
-                    sh 'kubectl create -f deployment.yaml'
+                    sh 'kubectl apply -f deployment.yaml'
                 }
             }
         }
