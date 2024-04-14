@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: javabot-springboot-deployment
+spec:
+  replicas: 2 
+  selector:
+    matchLabels:
+      app: javabot-springboot
+  template:
+    metadata:
+      labels:
+        app: javabot-springboot
+    spec:
+      containers:
+      - name: javabot-springboot
+        image: qro.ocir.io/ax6svbbnc2oh/registry-java-bot:latest 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - secretRef:
+            name: database-credentials  
+      imagePullSecrets:  
+      - name: ocirsecret  
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: javabot-springboot-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: javabot-springboot

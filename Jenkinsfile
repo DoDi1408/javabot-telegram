@@ -39,6 +39,13 @@ pipeline {
                 }
             }
         }
+        stage('Push to cluster'){
+            steps{
+                script{
+                    sh 'kubectl create -f deployment.yaml'
+                }
+            }
+        }
         stage('Cleanup'){
             steps{
                 script{
