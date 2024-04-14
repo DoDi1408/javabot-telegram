@@ -11,9 +11,9 @@ pipeline {
                 // Any maven phase that that triggers the test phase can be used here.
                 script{
                     sh 'echo $PATH'
-                    sh 'source ~/.bashrc'
-                    sh 'echo $PATH'
-                    sh 'oci -version'
+                    sh 'echo $0'
+                    sh 'export PATH=/home/jenkins/bin:$PATH'
+                    sh '/home/jenkins/bin/oci -version'
                     sh "export DIRECTORY=${DIRECTORY}"
                     sh 'cp -R /home/jenkins/wallet/ ./wallet'
                 }
