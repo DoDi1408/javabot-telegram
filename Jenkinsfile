@@ -42,6 +42,7 @@ pipeline {
         stage('Push to cluster'){
             steps{
                 script{
+                    sh 'oci -version'
                     sh 'kubectl create -f deployment.yaml'
                 }
             }
