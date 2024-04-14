@@ -7,12 +7,11 @@ pipeline {
         PATH = "/home/jenkins/bin:${env.PATH}"
     }
     stages{
-        stage('Seeing envs and copying'){
+        stage('Setting envs and copying'){
             steps{
                 // Any maven phase that that triggers the test phase can be used here.
                 script{
                     sh 'echo $PATH'
-                    sh 'echo "PATH is: ${env.PATH}"'
                     sh '/home/jenkins/bin/oci -version'
                     sh 'oci -version'
                     sh "export DIRECTORY=${DIRECTORY}"
