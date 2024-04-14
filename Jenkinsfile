@@ -10,8 +10,11 @@ pipeline {
             steps{
                 // Any maven phase that that triggers the test phase can be used here.
                 script{
-                sh "export DIRECTORY=${DIRECTORY}"
-                sh 'cp -R /home/jenkins/wallet/ ./wallet'
+                    sh 'whoami'
+                    sh 'echo $PATH'
+                    sh 'export PATH="/home/jenkins/bin:$PATH"'
+                    sh "export DIRECTORY=${DIRECTORY}"
+                    sh 'cp -R /home/jenkins/wallet/ ./wallet'
                 }
             }
         }
@@ -42,8 +45,6 @@ pipeline {
         stage('Push to cluster'){
             steps{
                 script{
-                    sh 'export PATH="/home/jenkins/bin/oci:$PATH"'
-                    sh 'oci -version'
                     sh 'kubectl create -f deployment.yaml'
                 }
             }
