@@ -11,7 +11,7 @@ pipeline {
                 // Any maven phase that that triggers the test phase can be used here.
                 script{
                     sh 'echo $PATH'
-                    sh 'exec bash'
+                    sh 'source ~/.bashrc'
                     sh 'echo $PATH'
                     sh 'oci -version'
                     sh "export DIRECTORY=${DIRECTORY}"
