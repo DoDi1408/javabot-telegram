@@ -4,6 +4,7 @@ pipeline {
         DB_CREDENTIALS = credentials('autonomous_database_credentials')
         OCI_CREDENTIALS = credentials('oci-user-authtoken')
         DIRECTORY = '/home/jenkins/wallet'
+        PATH = "/home/jenkins/bin:${env.PATH}"
     }
     stages{
         stage('Seeing envs and copying'){
@@ -11,9 +12,9 @@ pipeline {
                 // Any maven phase that that triggers the test phase can be used here.
                 script{
                     sh 'echo $PATH'
-                    sh 'echo $0'
-                    sh 'export PATH=/home/jenkins/bin:$PATH'
+                    sh 'echo "PATH is: ${env.PATH}"'
                     sh '/home/jenkins/bin/oci -version'
+                    sh 'oci -version'
                     sh "export DIRECTORY=${DIRECTORY}"
                     sh 'cp -R /home/jenkins/wallet/ ./wallet'
                 }
