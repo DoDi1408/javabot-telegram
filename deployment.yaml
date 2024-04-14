@@ -37,3 +37,22 @@ spec:
     targetPort: 8080
   selector:
     app: javabot-springboot
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-cluster
+  namespace: ingress-nginx
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "romongo.uk"
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: javabot-springboot-service
+              port:
+                number: 8080
