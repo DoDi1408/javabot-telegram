@@ -42,6 +42,8 @@ pipeline {
         stage('Push to cluster'){
             steps{
                 script{
+                    sh 'echo $PATH'
+                    sh 'export PATH="/home/jenkins/bin:$PATH"'
                     sh 'oci -version'
                     sh 'kubectl create -f deployment.yaml'
                 }
