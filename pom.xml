@@ -39,8 +39,18 @@
 		<!-- Oralce JDBC driver -->
 		<dependency>
             <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <version>19.6.0.0</version>
+            <artifactId>ojdbc11</artifactId>
+            <version>23.3.0.23.09</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.oracle.database.ha</groupId>
+					<artifactId>simplefan</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.oracle.database.ha</groupId>
+					<artifactId>ons</artifactId>
+				</exclusion>
+  			</exclusions>
         </dependency>
 		<dependency>
 			<groupId>com.oracle.database.security</groupId>
@@ -51,6 +61,11 @@
 			<groupId>com.oracle.database.security</groupId>
 			<artifactId>osdt_core</artifactId>
 			<version>21.1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ucp</artifactId>
+			<version>23.3.0.23.09</version>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle.database.security</groupId>
