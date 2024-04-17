@@ -30,7 +30,7 @@ kind: Service
 metadata:
   name: javabot-springboot-service
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - port: 8080
     protocol: TCP
@@ -45,7 +45,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: "romongo.uk"
+  - host: "service1.romongo.uk"
     http:
       paths:
         - pathType: Prefix
