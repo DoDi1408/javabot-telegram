@@ -55,3 +55,4 @@ spec:
               name: javabot-springboot-service
               port:
                 number: 8080
+## RECUERDA SI QUIERES HACER LLAMADAS A OTRO CLUSER IP DENTRO DEL MISMO NAMESPACE: http://servicename:SERVICEPORT
