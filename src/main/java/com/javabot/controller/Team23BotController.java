@@ -53,6 +53,7 @@ public class Team23BotController extends TelegramWebhookBot  {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText("Hello world");
+        System.out.println(sendMessage.toString());
         
         //String urlToSendMessage = "https://api.telegram.org/bot"+System.getenv("BOT_CREDENTIALS_PWD")+"/sendMessage?chat_id=" + chatId + "&text=" + messageTextFromTelegram;
         try {
