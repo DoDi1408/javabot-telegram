@@ -1,7 +1,8 @@
-package com.javabot.telegram;
+package com.javabot.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -30,9 +31,10 @@ public class Team23BotController extends TelegramWebhookBot  {
 
     @Override
     @PostMapping(path="/{botPath}")
-    public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+    public BotApiMethod<?> onWebhookUpdateReceived(@RequestBody Update update) {
         
         System.out.println(update.toString());
+        
         String messageTextFromTelegram = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
         long userId = update.getMessage().getFrom().getId();

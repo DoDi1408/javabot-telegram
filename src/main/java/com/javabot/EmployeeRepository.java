@@ -1,4 +1,4 @@
-package com.javabot.telegram;
+package com.javabot;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

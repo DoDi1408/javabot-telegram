@@ -44,6 +44,7 @@ pipeline {
             steps{
                 script{
                     sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl rollout restart deployment javabot-springboot-deployment'
                 }
             }
         }

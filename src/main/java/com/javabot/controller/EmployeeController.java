@@ -1,14 +1,15 @@
-package com.javabot.telegram;
+package com.javabot.controller;
 
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.javabot.Employee;
+import com.javabot.EmployeeRepository;
 
 @Controller
 @RequestMapping(path="/employee")
@@ -30,9 +31,4 @@ public class EmployeeController {
     return employeeRepository.findAll();
   }
 
-  @PostMapping(path="/testing")
-  public @ResponseBody String test (@RequestBody Update update){
-    System.out.println(update.toString());
-    return "Test Successful";
-  }
 }

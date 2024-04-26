@@ -1,4 +1,4 @@
-package com.javabot.telegram;
+package com.javabot;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
