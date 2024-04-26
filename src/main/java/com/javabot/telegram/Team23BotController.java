@@ -33,6 +33,8 @@ public class Team23BotController extends TelegramWebhookBot  {
             value = "/{botPath}"
     )
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+
+        System.out.println(update.toString());
         String messageTextFromTelegram = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
         long userId = update.getMessage().getFrom().getId();
