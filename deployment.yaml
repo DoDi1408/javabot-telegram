@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: javabot-springboot-deployment
 spec:
-  replicas: 2 
+  replicas: 1
   selector:
     matchLabels:
       app: javabot-springboot
