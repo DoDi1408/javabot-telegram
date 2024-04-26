@@ -26,6 +26,8 @@ public class Team23BotController extends TelegramLongPollingBot  {
     public Team23BotController(String botToken, String botName) {
 		super(botToken);
 		this.botName = botName;
+        logger.info("Bot Token: " + botToken);
+		logger.info("Bot name: " + botName);
 	}
 
     @Override
