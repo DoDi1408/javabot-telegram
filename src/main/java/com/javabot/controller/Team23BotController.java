@@ -1,7 +1,5 @@
 package com.javabot.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,8 +15,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @RequestMapping(path="/bot")
 public class Team23BotController extends TelegramWebhookBot  {
 
-    private static final Logger logger = LoggerFactory.getLogger(Team23BotController.class);
-
     private String botName = System.getenv("BOT_CREDENTIALS_USR");
     private String botPath = "https://api.romongo.uk/bot/" + System.getenv("BOT_CREDENTIALS_PWD");    
     @Override
@@ -32,7 +28,7 @@ public class Team23BotController extends TelegramWebhookBot  {
     }
 
     @Override
-    @PostMapping(path="/{secretToken}")
+    @PostMapping(path="/extreme-bot-endpoint")
     public BotApiMethod<?> onWebhookUpdateReceived(@RequestBody Update update) {
         
         
@@ -48,8 +44,8 @@ public class Team23BotController extends TelegramWebhookBot  {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText("Hello world");
-
-        String urlToSendMessage = "https://api.telegram.org/bot"+System.getenv("BOT_CREDENTIALS_PWD")+"/sendMessage?chatid=" + chatId + "&text=" + messageTextFromTelegram;
+        
+        //String urlToSendMessage = "https://api.telegram.org/bot"+System.getenv("BOT_CREDENTIALS_PWD")+"/sendMessage?chat_id=" + chatId + "&text=" + messageTextFromTelegram;
 
         return sendMessage;    
         /* 
