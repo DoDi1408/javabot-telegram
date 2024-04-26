@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
@@ -24,7 +25,7 @@ public class TelegramBotTeam23Application implements CommandLineRunner{
 			String token = System.getenv("BOT_CREDENTIALS_PSW");
 			String name = System.getenv("BOT_CREDENTIALS_USR");
 			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-			telegramBotsApi.registerBot(new Team23BotController(token, name));
+			telegramBotsApi.registerBot(new Team23BotController(token, name,"https://api.romongo.uk/bot/extreme-bot-endpoint"), new SetWebhook("https://api.romongo.uk/bot/extreme-bot-endpoint"));
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}
