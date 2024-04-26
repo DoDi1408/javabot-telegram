@@ -9,22 +9,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(path="/demo")
-public class UserController {
+@RequestMapping(path="/employee")
+public class EmployeeController {
   @Autowired
-  private UserRepository userRepository;
+  private EmployeeRepository employeeRepository;
 
   @PostMapping(path="/add")
-  public @ResponseBody String addNewUser (@RequestParam String name, @RequestParam String email) {
-    User n = new User();
-    n.setName(name);
-    n.setEmail(email);
-    userRepository.save(n);
-    return "Saved";
+  public @ResponseBody String addNewUser (@RequestParam String name, @RequestParam Integer teamNum) {
+    Employee n = new Employee();
+    n.setFirstName(name);
+    n.setIdTeam(teamNum);
+    employeeRepository.save(n);
+    return "Saved Successfully!";
   }
 
   @GetMapping(path="/all")
-  public @ResponseBody Iterable<User> getAllUsers() {
-    return userRepository.findAll();
+  public @ResponseBody Iterable<Employee> getAllUsers() {
+    return employeeRepository.findAll();
   }
 }

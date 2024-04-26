@@ -4,15 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoApplicationTests {
+class TelegramBotTeam23ApplicationTests {
 	
 	@Autowired
-  	private UserRepository userRepository;
+  	private EmployeeRepository employeeRepository;
 
     @Test
 	void contextLoads() {
 		try {
-			userRepository.testConnection();
+			employeeRepository.testConnection();
         } catch (Exception e) {
             System.out.println("EXCEPTION WHILE TESTING DATABASE CONNECTION: " + e.getMessage());
             throw new RuntimeException("I throw this error IF database connection fails so that the build fails, sorry, check database config", e);

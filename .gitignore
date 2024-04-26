@@ -3,6 +3,7 @@
 
 # Log file
 *.log
+logs.*
 
 # BlueJ files
 *.ctxt
@@ -29,3 +30,4 @@ target/
 wallet/
 mvnw
 mvnw.cmd
+env.txt
