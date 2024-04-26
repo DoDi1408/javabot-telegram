@@ -19,15 +19,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class Team23BotController extends TelegramWebhookBot  {
 
     private final static Logger logger = LoggerFactory.getLogger(Team23BotController.class);
-    private String botName;
-    private String botPath;    
-    private String botToken;
+    private String botName = System.getenv("BOT_CREDENTIALS_USR");
+    private String botPath = "https://api.romongo.uk/bot/extreme-bot-endpoint";
+    private String botToken = System.getenv("BOT_CREDENTIALS_PSW");
 
-    public Team23BotController(String botToken, String botName, String botPath) {
-        super(botToken);
-		this.botToken = botToken;
-		this.botName = botName;
-        this.botPath = botPath;
+     public Team23BotController() {
         logger.info("Bot Token: " + botToken);
 		logger.info("Bot name: " + botName);
 	}

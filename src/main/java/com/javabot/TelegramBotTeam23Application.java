@@ -22,10 +22,8 @@ public class TelegramBotTeam23Application implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		try {
-			String token = System.getenv("BOT_CREDENTIALS_PSW");
-			String name = System.getenv("BOT_CREDENTIALS_USR");
 			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-			telegramBotsApi.registerBot(new Team23BotController(token, name,"https://api.romongo.uk/bot/extreme-bot-endpoint"), new SetWebhook("https://api.romongo.uk/bot/extreme-bot-endpoint"));
+			telegramBotsApi.registerBot(new Team23BotController(), new SetWebhook("https://api.romongo.uk/bot/extreme-bot-endpoint"));
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}
