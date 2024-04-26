@@ -11,8 +11,6 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 
 @SuppressWarnings("deprecation")
 @Controller
@@ -22,7 +20,7 @@ public class Team23BotController extends TelegramWebhookBot  {
     private static final Logger logger = LoggerFactory.getLogger(Team23BotController.class);
 
     private String botName = System.getenv("BOT_CREDENTIALS_USR");
-    private String botPath = "/bot/" + System.getenv("BOT_CREDENTIALS_PWD");    
+    private String botPath = "https://api.romongo.uk/bot/" + System.getenv("BOT_CREDENTIALS_PWD");    
     @Override
 	public String getBotUsername() {		
 		return botName;
@@ -34,7 +32,7 @@ public class Team23BotController extends TelegramWebhookBot  {
     }
 
     @Override
-    @PostMapping(path="/{botPath}")
+    @PostMapping(path="/{secretToken}")
     public BotApiMethod<?> onWebhookUpdateReceived(@RequestBody Update update) {
         
         
@@ -46,14 +44,21 @@ public class Team23BotController extends TelegramWebhookBot  {
         System.out.println(userId);
         messageTextFromTelegram = messageTextFromTelegram + " " + userId;
         
-        SendMessage sm  = SendMessage.builder().chatId(chatId).text(messageTextFromTelegram).build();
 
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chatId));
+        sendMessage.setText("Hello world");
+
+        String urlToSendMessage = "https://api.telegram.org/bot"+System.getenv("BOT_CREDENTIALS_PWD")+"/sendMessage?chatid=" + chatId + "&text=" + messageTextFromTelegram;
+
+        return sendMessage;    
+        /* 
         try {
             execute(sm);                        //Actually sending the message
         } catch (TelegramApiException e) {
             logger.error(e.getLocalizedMessage(), e);      //Any error will be printed here
         }
-        return null;
+        */
     }
 
 
