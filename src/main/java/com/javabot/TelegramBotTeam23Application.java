@@ -21,10 +21,8 @@ public class TelegramBotTeam23Application implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		try {
-			String token = System.getenv("BOT_CREDENTIALS_PWD");
+			String token = System.getenv("BOT_CREDENTIALS_PSW");
 			String name = System.getenv("BOT_CREDENTIALS_USR");
-			System.out.println(token);
-			System.out.println(name);
 			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
 			telegramBotsApi.registerBot(new Team23BotController(token, name));
 		} catch (TelegramApiException e) {

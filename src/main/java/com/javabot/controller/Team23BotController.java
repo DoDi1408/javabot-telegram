@@ -24,7 +24,8 @@ public class Team23BotController extends TelegramLongPollingBot  {
     private String botToken;
 
     public Team23BotController(String botToken, String botName) {
-		super(botToken);
+        super(botToken);
+		this.botToken = botToken;
 		this.botName = botName;
         logger.info("Bot Token: " + botToken);
 		logger.info("Bot name: " + botName);
@@ -34,16 +35,17 @@ public class Team23BotController extends TelegramLongPollingBot  {
 	public String getBotUsername() {		
 		return botName;
 	}
+    @Override
+    public String getBotToken(){
+        return botToken;
+    }
     /*
     @Override
     public String getBotPath() {
         return botPath;
     }
     */
-    @Override
-    public String getBotToken(){
-        return botToken;
-    }
+    
 
     @Override
     public void onUpdateReceived(Update update){
