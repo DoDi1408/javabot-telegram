@@ -11,21 +11,21 @@ import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 
 @Controller
 @RequestMapping(path="/bot")
 public class Team23BotController extends TelegramWebhookBot  {
 
-    private final static Logger logger = LoggerFactory.getLogger(Team23BotController.class);
+    private final static Logger THE_LOGGER = LoggerFactory.getLogger(Team23BotController.class);
     private String botName = System.getenv("BOT_CREDENTIALS_USR");
     private String botPath = "https://api.romongo.uk/bot/extreme-bot-endpoint";
     private String botToken = System.getenv("BOT_CREDENTIALS_PSW");
 
-     public Team23BotController() {
-        logger.info("Bot Token: " + botToken);
-		logger.info("Bot name: " + botName);
+    @SuppressWarnings("deprecation")
+    public Team23BotController() {
+        THE_LOGGER.info("Bot Token: " + botToken);
+		THE_LOGGER.info("Bot name: " + botName);
 	}
 
     @Override
@@ -68,23 +68,17 @@ public class Team23BotController extends TelegramWebhookBot  {
     @PostMapping(path="/extreme-bot-endpoint")
     public BotApiMethod<?> onWebhookUpdateReceived(@RequestBody Update update) {
         
-        
         String messageTextFromTelegram = update.getMessage().getText();
         long userId = update.getMessage().getFrom().getId();
+        THE_LOGGER.info("Received message from " + userId + ", with text content " + messageTextFromTelegram);
         messageTextFromTelegram = messageTextFromTelegram + " " + userId;
-        
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(userId));
         sendMessage.setText(messageTextFromTelegram);
         
         //String urlToSendMessage = "https://api.telegram.org/bot"+System.getenv("BOT_CREDENTIALS_PWD")+"/sendMessage?chat_id=" + chatId + "&text=" + messageTextFromTelegram;
-        try {
-            execute(sendMessage);         
-        } catch (TelegramApiException e) {
-            logger.error(e.getLocalizedMessage(), e);     
-        }
-        return null;
+        return sendMessage;
     }
     
 
