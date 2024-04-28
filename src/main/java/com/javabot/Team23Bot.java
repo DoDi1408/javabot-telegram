@@ -45,7 +45,7 @@ public class Team23Bot extends TelegramWebhookBot {
         
         String messageTextFromTelegram = update.getMessage().getText();
         long userId = update.getMessage().getFrom().getId();
-        loggerBot.info("Recieved message from " + userId + ", with text content" + messageTextFromTelegram);
+        loggerBot.info("Recieved message from " + userId + ", with text content " + messageTextFromTelegram);
         messageTextFromTelegram = messageTextFromTelegram + " " + userId;
         
 
@@ -56,6 +56,12 @@ public class Team23Bot extends TelegramWebhookBot {
         //String urlToSendMessage = "https://api.telegram.org/bot"+System.getenv("BOT_CREDENTIALS_PWD")+"/sendMessage?chat_id=" + chatId + "&text=" + messageTextFromTelegram;
         try {
             execute(sendMessage);
+        } catch (TelegramApiException e){
+            loggerBot.error(e.getLocalizedMessage(),e);
+        }
+
+        try {
+            sendMessage.validate();
         } catch (TelegramApiException e){
             loggerBot.error(e.getLocalizedMessage(),e);
         }
