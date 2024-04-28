@@ -8,8 +8,6 @@ import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import com.javabot.controller.Team23BotController;
-
 
 
 @SpringBootApplication
@@ -23,7 +21,7 @@ public class TelegramBotTeam23Application implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		try {
 			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-			telegramBotsApi.registerBot(new Team23BotController(), new SetWebhook("https://api.romongo.uk/bot/extreme-bot-endpoint"));
+			telegramBotsApi.registerBot(new Team23Bot(), new SetWebhook("https://api.romongo.uk/bot/extreme-bot-endpoint"));
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}
