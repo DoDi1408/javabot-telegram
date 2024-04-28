@@ -1,3 +1,4 @@
+/* 
 package com.javabot.controller;
 
 import org.slf4j.Logger;
@@ -25,6 +26,5 @@ public class Team23BotController{
         return Team23BotInstance.onWebhookUpdateReceived(update);
     }
     
-
-
 }
+*/
