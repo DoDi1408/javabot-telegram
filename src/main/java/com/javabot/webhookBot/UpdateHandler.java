@@ -1,4 +1,4 @@
-package com.javabot;
+package com.javabot.webhookBot;
 
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

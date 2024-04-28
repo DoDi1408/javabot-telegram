@@ -1,4 +1,4 @@
-package com.javabot;
+package com.javabot.webhookBot;
 
 import java.io.BufferedReader;
 import java.io.IOException;
