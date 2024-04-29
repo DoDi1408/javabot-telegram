@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
+
 public class setWebhookRunnable implements Runnable {
 
     @Override
@@ -17,7 +18,6 @@ public class setWebhookRunnable implements Runnable {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             
-
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder response = new StringBuilder();
             String line;

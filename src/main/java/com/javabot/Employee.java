@@ -16,9 +16,9 @@ public class Employee {
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_seq")
   private Integer id;
 
-  private String firstName;
+  private String first_name;
 
-  private Integer idTeam;
+  private Integer id_team;
 
   public Integer getId() {
     return id;
@@ -29,18 +29,18 @@ public class Employee {
   }
 
   public String getFirstName() {
-    return firstName;
+    return first_name;
   }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
+  public void setFirstName(String first_name) {
+    this.first_name = first_name;
   }
 
   public Integer getEmail() {
-    return idTeam;
+    return id_team;
   }
 
   public void setIdTeam(Integer idTeam) {
-    this.idTeam = idTeam;
+    this.id_team = idTeam;
   }
 }
