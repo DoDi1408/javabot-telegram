@@ -10,6 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
+import com.javabot.models.Employee;
+
 @Component
 public class BotHandler {
 
