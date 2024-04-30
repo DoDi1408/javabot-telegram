@@ -6,8 +6,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Table(name = "EMPLOYEE")
 @Entity
+@Getter
+@Setter
 public class Employee {
 
   @Id
@@ -16,31 +22,18 @@ public class Employee {
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_seq")
   private Integer id;
 
-  private String first_name;
+  @Column(name = "FIRST_NAME")
+  private String firstName;
 
-  private Integer id_team;
+  @Column(name = "ID_TEAM")
+  private Integer idTeam;
 
-  public Integer getId() {
-    return id;
-  }
+  @Column(name = "TELEGRAM_ID", unique = true)
+  private long telegramId;
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+  @Column(name = "TELEGRAM_USERNAME")
+  private String telegramUsername;
 
-  public String getFirstName() {
-    return first_name;
-  }
-
-  public void setFirstName(String first_name) {
-    this.first_name = first_name;
-  }
-
-  public Integer getEmail() {
-    return id_team;
-  }
-
-  public void setIdTeam(Integer idTeam) {
-    this.id_team = idTeam;
-  }
+  @Column(name = "PASSWORD")
+  private String password;
 }

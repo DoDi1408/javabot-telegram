@@ -2,10 +2,6 @@ package com.javabot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
-//import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-//import org.telegram.telegrambots.bots.TelegramWebhookBot;
-//import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -19,14 +15,18 @@ import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import com.javabot.util.BotCommands;
+
 @Component
 public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
+    private final BotHandler handler;
 
     private final static Logger loggerBot = LoggerFactory.getLogger(Team23BotLongPolling.class);
     
     public Team23BotLongPolling() {
         telegramClient = new OkHttpTelegramClient(getBotToken());
+        this.handler = new BotHandler();
     }
 
 
@@ -47,16 +47,25 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             String message_text = update.getMessage().getText();
             long chat_id = update.getMessage().getChatId();
             loggerBot.info("Recieved message from " + chat_id + ", with text content " + message_text);
-            SendMessage message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text(message_text)
-                    .build();
-            try {
-                telegramClient.execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+
+            if (message_text.equals(BotCommands.START_COMMAND.getCommand())){
+                SendMessage message = handler.handleStart(chat_id);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
             }
+            
+            if (message_text.equals(BotCommands.REGISTER_COMMAND.getCommand())){
+                SendMessage message = handler.handleRegistration(update);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+            
         }
     }
     @AfterBotRegistration
