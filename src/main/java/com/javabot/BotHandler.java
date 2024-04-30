@@ -32,7 +32,7 @@ public class BotHandler {
     public SendMessage handleRegistration(Update update){
         Message message = update.getMessage();
         long chat_id = message.getChatId();
-        User user = message.getForwardFrom();
+        User user = message.getFrom();
 
         Employee emp = new Employee();
         emp.setFirstName(user.getFirstName());
