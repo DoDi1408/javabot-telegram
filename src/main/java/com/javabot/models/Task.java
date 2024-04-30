@@ -1,6 +1,5 @@
 package com.javabot.models;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +20,7 @@ public class Task {
     @Column(name = "ID")
     @SequenceGenerator(name = "task_seq", sequenceName = "task_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_seq")
-    private int id;
+    private Integer id;
 
     @Column(name = "START_DATE")
     private Date startDate;
@@ -41,4 +40,80 @@ public class Task {
     @ManyToOne
     @JoinColumn(name="ID_EMPLOYEE", referencedColumnName="id")
     private Employee employee;
+
+    public Task(){
+        
+    }
+
+    public Task(Integer id, Date startDate, Date dueDate, String description, Integer stateTask, Integer showTask, Employee employee) {
+        this.id = id;
+        this.startDate = startDate;
+        this.dueDate = dueDate;
+        this.description = description;
+        this.stateTask = stateTask;
+        this.showTask = showTask;
+        this.employee = employee;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getStateTask() {
+        return stateTask;
+    }
+
+    public void setStateTask(Integer stateTask) {
+        this.stateTask = stateTask;
+    }
+
+    public Integer getShowTask() {
+        return showTask;
+    }
+
+    public void setShowTask(Integer showTask) {
+        this.showTask = showTask;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    @Override
+    public String toString() {
+        return "Task [id=" + id + ", startDate=" + startDate + ", dueDate=" + dueDate + ", description=" + description
+                + ", stateTask=" + stateTask + ", showTask=" + showTask + ", employee=" + employee + "]";
+    }
 }
