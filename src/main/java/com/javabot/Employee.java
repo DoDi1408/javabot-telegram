@@ -31,8 +31,8 @@ public class Employee {
   @Column(name = "TELEGRAM_ID", unique = true)
   private long telegramId;
 
-  @Column(name = "TELEGRAM_USERNAME")
-  private String telegramUsername;
+  @Column(name = "LAST_NAME")
+  private String lastName;
 
   @Column(name = "PASSWORD")
   private String password;

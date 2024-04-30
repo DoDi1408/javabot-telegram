@@ -4,12 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
-
+@Component
 public class BotHandler {
 
     private final static Logger loggerHandler = LoggerFactory.getLogger(BotHandler.class);
@@ -34,9 +35,11 @@ public class BotHandler {
         long chat_id = message.getChatId();
         User user = message.getFrom();
 
+        loggerHandler.info(user.toString());
+
         Employee emp = new Employee();
         emp.setFirstName(user.getFirstName());
-        emp.setTelegramUsername(user.getUserName());
+        emp.setLastName(user.getLastName());
         emp.setTelegramId(chat_id);
 
         try {

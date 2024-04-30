@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -20,13 +20,14 @@ import com.javabot.util.BotCommands;
 @Component
 public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
-    private final BotHandler handler;
+    
+    @Autowired
+    private BotHandler handler;
 
     private final static Logger loggerBot = LoggerFactory.getLogger(Team23BotLongPolling.class);
     
     public Team23BotLongPolling() {
         telegramClient = new OkHttpTelegramClient(getBotToken());
-        this.handler = new BotHandler();
     }
 
 
@@ -56,7 +57,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     loggerBot.error("API Exception",e);
                 }
             }
-            
+
             if (message_text.equals(BotCommands.REGISTER_COMMAND.getCommand())){
                 SendMessage message = handler.handleRegistration(update);
                 try {
