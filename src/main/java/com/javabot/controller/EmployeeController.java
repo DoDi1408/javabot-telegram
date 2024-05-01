@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.javabot.EmployeeRepository;
 import com.javabot.models.Employee;
+import com.javabot.models.Team;
+import com.javabot.service.EmployeeRepository;
+import com.javabot.service.TeamServiceImpl;
+
 
 @Controller
 @RequestMapping(path="/employee")
@@ -17,12 +20,18 @@ public class EmployeeController {
   @Autowired
   private EmployeeRepository employeeRepository;
 
+  @Autowired
+  private TeamServiceImpl teamServiceImpl;
+
+
   @PostMapping(path="/add")
   public @ResponseBody String addNewUser (@RequestParam String name, @RequestParam Integer teamNum) {
     Employee n = new Employee();
     n.setFirstName(name);
-    n.setIdTeam(teamNum);
+    Team t = teamServiceImpl.findById(teamNum);
+    n.setTeam(t);
     employeeRepository.save(n);
+    System.out.println(t);
     return "Saved Successfully!";
   }
 
