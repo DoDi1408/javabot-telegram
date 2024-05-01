@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 import com.javabot.models.Employee;
+import com.javabot.service.EmployeeRepository;
 
 @Component
 public class BotHandler {

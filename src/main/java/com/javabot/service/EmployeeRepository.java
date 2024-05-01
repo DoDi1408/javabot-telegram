@@ -1,4 +1,4 @@
-package com.javabot;
+package com.javabot.service;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
