@@ -10,5 +10,4 @@ public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
     @Query("SELECT 1")
     void testConnection();
 
-    
 }

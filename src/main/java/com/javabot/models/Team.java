@@ -37,7 +37,7 @@ public class Team {
 
     }
 
-    public Team(Integer id, String nameTeam) {
+    public Team(String nameTeam) {
         this.nameTeam = nameTeam;
     }
 

@@ -12,7 +12,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "EMPLOYEE")
+@Table(name = "MANAGER")
 public class Manager {
 
     @Id
@@ -21,27 +21,17 @@ public class Manager {
     @Column(name="ID")
     private int id;
 
-    @Column(name = "FIRST_NAME")
-    private String firstName;
-
-    @Column(name = "LAST_NAME")
-    private String lastName;
-    
-    @Column(name = "TELEGRAM_ID", unique = true)
-    private long telegramId;
-    
-    @Column(name = "PASSWORD")
-    private String password;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="ID_TEAM", referencedColumnName="id")
     private Team team;
 
-    public Manager() {
-    }
+    @OneToOne(optional=false)
+    @JoinColumn(name="ID_EMPLOYEE", unique=true, nullable=false, updatable=false, referencedColumnName="id")
+    private Employee selfEmployee;
 
-    public Manager(String firstName, Team team) {
-        this.firstName = firstName;
+
+    public Manager(Employee emp, Team team) {
+        this.selfEmployee = emp;
         this.team = team;
     }
 
@@ -52,15 +42,7 @@ public class Manager {
     public void setId(int id) {
         this.id = id;
     }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
+ 
     public Team getTeam() {
         return team;
     }
@@ -69,9 +51,16 @@ public class Manager {
         this.team = team;
     }
 
+    public void setEmployee(Employee sEmployee){
+        this.selfEmployee = sEmployee;
+    }
+
+    public Employee getEmployee(){
+        return this.selfEmployee;
+    }
     @Override
     public String toString() {
-        return "Manager [id=" + id + ", firstName=" + firstName + "]";
+        return "Manager [id=" + id +"]";
     }
 
     

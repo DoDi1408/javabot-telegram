@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -44,12 +45,16 @@ public class Employee {
   @OneToMany(mappedBy="employee", cascade=CascadeType.ALL, orphanRemoval=true)
   private List<Task> tasks;
 
+  @OneToOne(optional=true, mappedBy = "selfEmployee")
+  private Manager manager;
 
   public Employee(){
   }
 
-  public Employee(String firstName) {
+  public Employee(String firstName, String lastName, long telegramId) {
     this.firstName = firstName;
+    this.lastName = lastName;
+    this.telegramId = telegramId;
   }
 
   public Integer getId() {

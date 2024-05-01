@@ -46,6 +46,9 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
     public void consume(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String message_text = update.getMessage().getText();
+
+            String[] words = message_text.split(" ");
+
             long chat_id = update.getMessage().getChatId();
             loggerBot.info("Recieved message from " + chat_id + ", with text content " + message_text);
 
@@ -59,7 +62,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             }
 
             else if (message_text.equals(BotCommands.REGISTER_EMP_COMMAND.getCommand())){
-                SendMessage message = handler.handleRegistration(update);
+                SendMessage message = handler.handleRegistrationEmployee(chat_id, update.getMessage().getFrom());
                 try {
                     telegramClient.execute(message);
                 } catch (TelegramApiException e) {
@@ -67,13 +70,35 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 }
             }
 
-            else if (message_text.equals(BotCommands.TODO_LIST.getCommand())){
-                SendMessage message = handler.handleRegistration(update);
+            else if (message_text.equals(BotCommands.REGISTER_MAN_COMMAND.getCommand())){
+                SendMessage message = handler.handleRegistrationManager(chat_id);
                 try {
                     telegramClient.execute(message);
                 } catch (TelegramApiException e) {
                     loggerBot.error("API Exception",e);
                 }
+            }
+
+            else if (words[0].equals(BotCommands.REGISTER_MANAGER.getCommand())){
+                String teamName = words[1];
+                SendMessage message = handler.handleRegistrationManagerReal(chat_id, update.getMessage().getFrom(), teamName);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+            else{
+                SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("I don't know how to react to that :(")
+                    .build();
+                    try {
+                        telegramClient.execute(new_message);
+                    } catch (TelegramApiException e) {
+                        loggerBot.error("API Exception",e);
+                    }
             }
             
         }

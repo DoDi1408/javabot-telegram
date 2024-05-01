@@ -28,8 +28,8 @@ public class TeamServiceImpl implements TeamService{
 
     @Override
     @Transactional
-    public void create(Team theTask) {
-        entityManager.persist(theTask);
+    public void create(Team theTeam) {
+        entityManager.persist(theTeam);
     }
 
     @Override
