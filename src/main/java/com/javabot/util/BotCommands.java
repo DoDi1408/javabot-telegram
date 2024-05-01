@@ -3,7 +3,8 @@ package com.javabot.util;
 public enum BotCommands {
 
 	START_COMMAND("/start"), 
-	REGISTER_COMMAND("/register"), 
+	REGISTER_EMP_COMMAND("/registerEmployee"), 
+	REGISTER_MAN_COMMAND("/registerManager"),
 	TODO_LIST("/todolist"),
 	ADD_ITEM("/additem");
 

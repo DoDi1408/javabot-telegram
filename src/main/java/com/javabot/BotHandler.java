@@ -38,9 +38,7 @@ public class BotHandler {
         Message message = update.getMessage();
         long chat_id = message.getChatId();
         User user = message.getFrom();
-
-        loggerHandler.info(user.toString());
-
+        
         Employee emp = new Employee();
         emp.setFirstName(user.getFirstName());
         emp.setLastName(user.getLastName());
@@ -70,7 +68,7 @@ public class BotHandler {
         SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text("Successfully registered you! You can now begin to add tasks!\n You can now complete your registration over at frontend.romongo.uk!\n Remember, your username is your current telegram username, which is " + user.getUserName() + " in your case.")
+                    .text("Successfully registered you! You can now begin to add tasks!\n You can now complete your registration over at frontend.romongo.uk!\n Remember, your username is " +  chat_id + ".")
                     .build();
         return new_message;
     }

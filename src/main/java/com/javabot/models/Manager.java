@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,12 +16,22 @@ import jakarta.persistence.Table;
 public class Manager {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "manager_seq", sequenceName = "manager_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "manager_seq")
     @Column(name="ID")
     private int id;
 
     @Column(name = "FIRST_NAME")
     private String firstName;
+
+    @Column(name = "LAST_NAME")
+    private String lastName;
+    
+    @Column(name = "TELEGRAM_ID", unique = true)
+    private long telegramId;
+    
+    @Column(name = "PASSWORD")
+    private String password;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="ID_TEAM", referencedColumnName="id")

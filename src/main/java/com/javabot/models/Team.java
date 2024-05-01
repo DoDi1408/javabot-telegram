@@ -2,8 +2,6 @@ package com.javabot.models;
 
 import java.util.List;
 
-import org.apache.catalina.Manager;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,10 +27,10 @@ public class Team {
     @Column(name = "NAME_TEAM")
     private String nameTeam;
 
-    @OneToMany(mappedBy="TEAM", cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="team", cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER)
     private List<Employee> employees;
 
-    @OneToOne(mappedBy="TEAM", cascade=CascadeType.ALL, orphanRemoval=true)
+    @OneToOne(mappedBy="team", cascade=CascadeType.ALL, orphanRemoval=true)
     private Manager manager;
 
     public Team(){

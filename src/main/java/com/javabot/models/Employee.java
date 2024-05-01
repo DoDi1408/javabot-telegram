@@ -38,14 +38,14 @@ public class Employee {
   private String password;
 
   @ManyToOne
-  @JoinColumn(name = "ID_TEAM", referencedColumnName = "id")
+  @JoinColumn(name = "ID_TEAM", referencedColumnName = "ID")
   private Team team;
 
-  @OneToMany(mappedBy="EMPLOYEE", cascade=CascadeType.ALL, orphanRemoval=true)
+  @OneToMany(mappedBy="employee", cascade=CascadeType.ALL, orphanRemoval=true)
   private List<Task> tasks;
 
-  public Employee(){
 
+  public Employee(){
   }
 
   public Employee(String firstName) {

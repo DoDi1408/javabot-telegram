@@ -38,7 +38,7 @@ public class Task {
     private Integer showTask;
 
     @ManyToOne
-    @JoinColumn(name="ID_EMPLOYEE", referencedColumnName="id")
+    @JoinColumn(name="ID_EMPLOYEE", referencedColumnName="ID")
     private Employee employee;
 
     public Task(){
