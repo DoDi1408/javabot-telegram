@@ -58,7 +58,16 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 }
             }
 
-            if (message_text.equals(BotCommands.REGISTER_COMMAND.getCommand())){
+            else if (message_text.equals(BotCommands.REGISTER_COMMAND.getCommand())){
+                SendMessage message = handler.handleRegistration(update);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+
+            else if (message_text.equals(BotCommands.TODO_LIST.getCommand())){
                 SendMessage message = handler.handleRegistration(update);
                 try {
                     telegramClient.execute(message);

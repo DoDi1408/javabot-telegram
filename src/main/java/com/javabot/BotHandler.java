@@ -32,6 +32,7 @@ public class BotHandler {
                     .build();
         return message;
     }
+    
     public SendMessage handleRegistration(Update update){
         Message message = update.getMessage();
         long chat_id = message.getChatId();
