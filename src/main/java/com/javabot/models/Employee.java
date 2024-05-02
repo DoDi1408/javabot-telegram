@@ -19,7 +19,6 @@ import jakarta.persistence.Table;
 @Table(name = "EMPLOYEE")
 @Entity
 public class Employee {
-
   @Id
   @Column(name = "ID")
   @SequenceGenerator(name = "employee_seq", sequenceName = "employee_seq", allocationSize = 1)
@@ -34,7 +33,7 @@ public class Employee {
 
   @Column(name = "TELEGRAM_ID", unique = true)
   private long telegramId;
-  
+
   @Column(name = "PASSWORD")
   private String password;
 
