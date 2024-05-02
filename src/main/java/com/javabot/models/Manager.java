@@ -27,14 +27,14 @@ public class Manager {
 
     @OneToOne(optional=false)
     @JoinColumn(name="ID_EMPLOYEE", unique=true, nullable=false, updatable=false, referencedColumnName="id")
-    private Employee selfEmployee;
+    private Employee employee;
 
     public Manager(){
-        this.selfEmployee = new Employee();
+        this.employee = new Employee();
         this.team = new Team();
     }
     public Manager(Employee emp, Team team) {
-        this.selfEmployee = emp;
+        this.employee = emp;
         this.team = team;
     }
 
@@ -55,15 +55,15 @@ public class Manager {
     }
 
     public void setEmployee(Employee sEmployee){
-        this.selfEmployee = sEmployee;
+        this.employee = sEmployee;
     }
 
     public Employee getEmployee(){
-        return this.selfEmployee;
+        return this.employee;
     }
     @Override
     public String toString() {
-        return "Manager [id=" + id +"]";
+        return "Manager [id=" + id +", " + getEmployee().toString() + ", " + getTeam() + "]";
     }
 
     

@@ -44,6 +44,7 @@ public class TeamServiceImpl implements TeamService{
         Team theTeam = entityManager.find(Team.class, id);
         entityManager.remove(theTeam);
     }
+    @Override
     @Transactional
     public List<Employee> teamEmployees(Integer id) {
         TypedQuery<Employee> theQuery = entityManager.createQuery("SELECT e FROM Employee e WHERE e.team.id =:teamId",
@@ -51,6 +52,7 @@ public class TeamServiceImpl implements TeamService{
         theQuery.setParameter("teamId", id);
         return theQuery.getResultList();
     }
+    @Override
     @Transactional
     public Manager teamManager(Integer id){
         TypedQuery<Manager> theQuery = entityManager.createQuery("SELECT t.manager FROM Team t WHERE t.id = :teamId", Manager.class);

@@ -74,4 +74,13 @@ public class ManagerServiceImpl implements ManagerService{
         jdbcTemplate.update(insertManagerQuery, id_employeeVAL, id_teamVAL);
  
     }
+
+    @Transactional
+    public Manager findByEmployeeId(Integer employeeId){
+        String sqlQuery = "SELECT m FROM Manager m " + "WHERE m.employee.id = :employeeId";
+        TypedQuery<Manager> theQuery = entityManager.createQuery(sqlQuery, Manager.class);
+        theQuery.setParameter("employeeId", employeeId);
+
+        return theQuery.getSingleResult();
+    }
 }

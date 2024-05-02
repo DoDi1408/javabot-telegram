@@ -11,10 +11,16 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import com.javabot.models.Employee;
+import com.javabot.models.Manager;
+import com.javabot.models.Task;
 import com.javabot.models.Team;
 import com.javabot.service.EmployeeRepository;
+import com.javabot.service.EmployeeServiceImpl;
 import com.javabot.service.ManagerServiceImpl;
 import com.javabot.service.TeamServiceImpl;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
 
 @Component
 public class BotHandler {
@@ -26,6 +32,9 @@ public class BotHandler {
 
     @Autowired
     ManagerServiceImpl managerServiceImpl;
+
+    @Autowired
+    EmployeeServiceImpl employeeServiceImpl;
 
     @Autowired
     TeamServiceImpl teamServiceImpl;
@@ -88,6 +97,7 @@ public class BotHandler {
 
 
     }
+    // tries to create manager, if employee already exists throws exception
     public SendMessage handleRegistrationManagerReal(long chat_id, User user, String teamName){
         try {
             managerServiceImpl.createManager(user.getFirstName(),user.getLastName(), Long.toString(chat_id), teamName);
@@ -117,6 +127,7 @@ public class BotHandler {
                     .build();
         return new_message;
     }
+    // self explanatory
     public SendMessage handleGetTeams(long chat_id){
         try{
             String textMessage = new String();
@@ -142,16 +153,125 @@ public class BotHandler {
             return new_message;
         }
     }
+    // changes team for employee, if manager doesnt allow it
     public SendMessage handleChangeTeam(long chat_id, String team_num){
         try {
             Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
-            Team teamToBeAdded = teamServiceImpl.findById(Integer.valueOf(team_num));
-            modifyEmployee.setTeam(teamToBeAdded);
-            EmployeeRepository.save(modifyEmployee);
+            try {
+                Manager man = managerServiceImpl.findByEmployeeId(modifyEmployee.getId());
+                loggerHandler.info("MANAGER DETECTED, THOU CANT CHANGE TEAM");
+                SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("You are a manager! Managers can't change teams.")
+                    .build();
+                return new_message;
+            }
+            catch (NoResultException e){
+                loggerHandler.error("Manager does not exist (Thats good)", e);
+                    Team teamToBeAdded = teamServiceImpl.findById(Integer.valueOf(team_num));
+                    if (teamToBeAdded == null){
+                        loggerHandler.error("Team does not exist (Thats bad)");
+                        SendMessage new_message = SendMessage
+                        .builder()
+                        .chatId(chat_id)
+                        .text("That team does not exist")
+                        .build();
+                        return new_message;
+                    }
+                    else {
+                        modifyEmployee.setTeam(teamToBeAdded);
+                        EmployeeRepository.save(modifyEmployee);
+                        SendMessage new_message = SendMessage
+                                .builder()
+                                .chatId(chat_id)
+                                .text("Success!\n You are now a part of team: " + teamToBeAdded.getNameTeam())
+                                .build();
+                        return new_message;
+                    }
+            }
+        }
+        catch (Exception e){
+            loggerHandler.error("General error", e);
             SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text("Success!\n You are now a part of team: " + teamToBeAdded.getNameTeam())
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+
+        }
+    }
+    public SendMessage getTodoList(long chat_id){
+        try {
+            Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
+            List<Task> todoList = employeeServiceImpl.allEmployeeTasks(modifyEmployee.getId());
+            String textMessage = new String();
+            for (Task task : todoList) {
+                textMessage = textMessage + task.getStateTask() + " " + task.getDescription()+ " " + task.getStartDate() + "\n";
+            }
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("These are your tasks: \n" + textMessage)
+                    .build();
+            return new_message;
+        }
+        catch (EntityNotFoundException e) {
+            loggerHandler.error("Entity not found", e);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("I did not find you on our internal database, are you sure you area already registered?")
+                    .build();
+            return new_message;
+        }
+        catch (Exception e){
+            loggerHandler.error("General error", e);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+        }
+    }
+
+    public SendMessage getTodoListTeam(long chat_id){
+        try {
+            Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
+            try {
+                Manager man = managerServiceImpl.findByEmployeeId(modifyEmployee.getId());
+                loggerHandler.info("MANAGER DETECTED, YOU CAN!! CHECK ALL TASKS OF YOUR TEAM");
+                Integer teamID = man.getTeam().getId();
+                List <Task> teamTasks = managerServiceImpl.allTeamTasks(teamID);
+                String textMessage = new String();
+                for (Task task : teamTasks) {
+                    textMessage = textMessage + task.getStateTask() + " " + task.getDescription()+ " " + task.getStartDate() + "\n";
+                }
+                SendMessage new_message = SendMessage
+                        .builder()
+                        .chatId(chat_id)
+                        .text("These are your team's tasks: \n" + textMessage)
+                        .build();
+                return new_message;
+            }
+            catch (NoResultException notManagerError){
+                loggerHandler.error("YOU ARE NOT A MANAGER!!! REEEW", notManagerError);
+                SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("You are not a manager! You can't do that!")
+                    .build();
+                return new_message;
+            }
+        }
+        catch (EntityNotFoundException e){
+            loggerHandler.error("Entity not found", e);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("I did not find you on our internal database, are you sure you area already registered?")
                     .build();
             return new_message;
         }
@@ -165,5 +285,7 @@ public class BotHandler {
             return new_message;
 
         }
+
     }
+
 }

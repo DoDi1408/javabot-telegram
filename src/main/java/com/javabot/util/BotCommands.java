@@ -8,7 +8,8 @@ public enum BotCommands {
 	REGISTER_MANAGER("REGISTER_MANAGER"),
 	JOIN_TEAM("/joinTeam"),
 	JOIN_TEAM_IMP("JOIN_TEAM"),
-	TODO_LIST("/todolist"),
+	TODO_LIST("/todoList"),
+	TEAM_LIST("/teamList"),
 	ADD_ITEM("/additem");
 
 	private String command;

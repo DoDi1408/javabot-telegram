@@ -45,7 +45,7 @@ public class Employee {
   @OneToMany(mappedBy="employee", cascade=CascadeType.ALL, orphanRemoval=true)
   private List<Task> tasks;
 
-  @OneToOne(optional=true, mappedBy = "selfEmployee")
+  @OneToOne(optional=true, mappedBy = "employee")
   private Manager manager;
 
   public Employee(){
