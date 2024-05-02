@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.javabot.models.Employee;
 import com.javabot.models.Task;
 import com.javabot.models.Team;
-import com.javabot.service.EmployeeRepository;
-import com.javabot.service.TaskServiceImpl;
-import com.javabot.service.TeamServiceImpl;
+import com.javabot.serviceimp.EmployeeRepository;
+import com.javabot.serviceimp.EmployeeServiceImpl;
+import com.javabot.serviceimp.TaskServiceImpl;
+import com.javabot.serviceimp.TeamServiceImpl;
 
 @Controller
 @RequestMapping(path = "/employee")
@@ -26,7 +27,7 @@ public class EmployeeController {
   private TeamServiceImpl teamServiceImpl;
 
   @Autowired
-  private TaskServiceImpl taskService;
+  private EmployeeServiceImpl employeeServiceImpl;
 
   @PostMapping(path = "/add")
   public @ResponseBody String addNewUser(@RequestParam String name, @RequestParam Integer teamNum) {
@@ -46,7 +47,7 @@ public class EmployeeController {
 
   @GetMapping(path = "/{id}/tasks")
   public @ResponseBody Iterable<Task> getTasksByEmployee(@PathVariable Integer id) {
-    return taskService.findByEmployeeId(id);
+    return employeeServiceImpl.allEmployeeTasks(id);
   }
 
 }

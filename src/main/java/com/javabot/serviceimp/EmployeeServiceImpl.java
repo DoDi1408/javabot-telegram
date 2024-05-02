@@ -1,4 +1,4 @@
-package com.javabot.service;
+package com.javabot.serviceimp;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.javabot.models.Employee;
 import com.javabot.models.Task;
+import com.javabot.service.EmployeeService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;

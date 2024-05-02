@@ -34,8 +34,6 @@ public class Task {
     @Column(name="STATE_TASK")
     private Integer stateTask;
 
-    @Column(name="SHOW_TASK")
-    private Integer showTask;
 
     @ManyToOne
     @JoinColumn(name="ID_EMPLOYEE", referencedColumnName="ID")
@@ -45,13 +43,12 @@ public class Task {
         
     }
 
-    public Task(Integer id, Date startDate, Date dueDate, String description, Integer stateTask, Integer showTask, Employee employee) {
+    public Task(Integer id, Date startDate, Date dueDate, String description, Integer stateTask, Employee employee) {
         this.id = id;
         this.startDate = startDate;
         this.dueDate = dueDate;
         this.description = description;
         this.stateTask = stateTask;
-        this.showTask = showTask;
         this.employee = employee;
     }
 
@@ -95,14 +92,6 @@ public class Task {
         this.stateTask = stateTask;
     }
 
-    public Integer getShowTask() {
-        return showTask;
-    }
-
-    public void setShowTask(Integer showTask) {
-        this.showTask = showTask;
-    }
-
     public Employee getEmployee() {
         return employee;
     }
@@ -114,6 +103,6 @@ public class Task {
     @Override
     public String toString() {
         return "Task [id=" + id + ", startDate=" + startDate + ", dueDate=" + dueDate + ", description=" + description
-                + ", stateTask=" + stateTask + ", showTask=" + showTask + ", employee=" + employee + "]";
+                + ", stateTask=" + stateTask + ", employee=" + employee + "]";
     }
 }

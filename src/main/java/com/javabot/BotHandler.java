@@ -14,10 +14,12 @@ import com.javabot.models.Employee;
 import com.javabot.models.Manager;
 import com.javabot.models.Task;
 import com.javabot.models.Team;
-import com.javabot.service.EmployeeRepository;
-import com.javabot.service.EmployeeServiceImpl;
-import com.javabot.service.ManagerServiceImpl;
-import com.javabot.service.TeamServiceImpl;
+import com.javabot.serviceimp.EmployeeRepository;
+import com.javabot.serviceimp.EmployeeServiceImpl;
+import com.javabot.serviceimp.ManagerServiceImpl;
+import com.javabot.serviceimp.TeamServiceImpl;
+import com.vdurmont.emoji.EmojiParser;
+
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
@@ -206,14 +208,24 @@ public class BotHandler {
         try {
             Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
             List<Task> todoList = employeeServiceImpl.allEmployeeTasks(modifyEmployee.getId());
-            String textMessage = new String();
+            String toDoTask = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
+            String inProgressTask = EmojiParser.parseToUnicode("In progress tasks: :hourglass: \n");
+            String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
             for (Task task : todoList) {
-                textMessage = textMessage + task.getStateTask() + " " + task.getDescription()+ " " + task.getStartDate() + "\n";
+                if (task.getStateTask().equals(0)){
+                    toDoTask = toDoTask + "- " + task.getDescription()+ " " + task.getStartDate() + "\n";
+                }
+                else if (task.getStateTask().equals(1)){
+                    inProgressTask = inProgressTask + "- " + task.getDescription()+ " " + task.getStartDate() + "\n";
+                }
+                else if (task.getStateTask().equals(2)){
+                    completedTask = completedTask + "- " + task.getDescription()+ " " + task.getStartDate() + "\n";
+                }
             }
             SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text("These are your tasks: \n" + textMessage)
+                    .text(toDoTask + inProgressTask + completedTask)
                     .build();
             return new_message;
         }

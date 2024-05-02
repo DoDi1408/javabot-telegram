@@ -1,13 +1,11 @@
-package com.javabot.service;
-
-import java.util.List;
+package com.javabot.serviceimp;
 
 import org.springframework.stereotype.Service;
 
 import com.javabot.models.Task;
+import com.javabot.service.TaskService;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -41,15 +39,5 @@ public class TaskServiceImpl implements TaskService {
     public void delete(Integer id) {
         Task theTask = entityManager.find(Task.class, id);
         entityManager.remove(theTask);
-    }
-
-    public List<Task> findByEmployeeId(Integer employeeId) {
-        String sqlQuery = "SELECT t FROM Task t " +
-                "WHERE t.employee.id = :employeeId";
-
-        TypedQuery<Task> theQuery = entityManager.createQuery(sqlQuery, Task.class);
-        theQuery.setParameter("employeeId", employeeId);
-
-        return theQuery.getResultList();
     }
 }
