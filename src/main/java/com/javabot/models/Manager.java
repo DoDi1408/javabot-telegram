@@ -29,7 +29,10 @@ public class Manager {
     @JoinColumn(name="ID_EMPLOYEE", unique=true, nullable=false, updatable=false, referencedColumnName="id")
     private Employee selfEmployee;
 
-
+    public Manager(){
+        this.selfEmployee = new Employee();
+        this.team = new Team();
+    }
     public Manager(Employee emp, Team team) {
         this.selfEmployee = emp;
         this.team = team;

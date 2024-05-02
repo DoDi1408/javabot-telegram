@@ -78,7 +78,14 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     loggerBot.error("API Exception",e);
                 }
             }
-
+            else if (message_text.equals(BotCommands.JOIN_TEAM.getCommand())){
+                SendMessage message = handler.handleGetTeams(chat_id);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
             else if (words[0].equals(BotCommands.REGISTER_MANAGER.getCommand())){
                 String teamName = words[1];
                 SendMessage message = handler.handleRegistrationManagerReal(chat_id, update.getMessage().getFrom(), teamName);
@@ -88,6 +95,16 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     loggerBot.error("API Exception",e);
                 }
             }
+            else if (words[0].equals(BotCommands.JOIN_TEAM_IMP.getCommand())){
+                String teamNum = words[1];
+                SendMessage message = handler.handleChangeTeam(chat_id, teamNum);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+
             else{
                 SendMessage new_message = SendMessage
                     .builder()

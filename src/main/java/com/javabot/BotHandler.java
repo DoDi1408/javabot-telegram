@@ -1,5 +1,7 @@
 package com.javabot;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import com.javabot.models.Employee;
+import com.javabot.models.Team;
 import com.javabot.service.EmployeeRepository;
 import com.javabot.service.ManagerServiceImpl;
+import com.javabot.service.TeamServiceImpl;
 
 @Component
 public class BotHandler {
@@ -23,6 +27,8 @@ public class BotHandler {
     @Autowired
     ManagerServiceImpl managerServiceImpl;
 
+    @Autowired
+    TeamServiceImpl teamServiceImpl;
     public BotHandler(){
     }
 
@@ -110,5 +116,54 @@ public class BotHandler {
                     .text("Successfully registered you! You can now see your team's tasks!\n You can now complete your registration over at frontend.romongo.uk!\n Remember, your username is " +  chat_id + ".")
                     .build();
         return new_message;
+    }
+    public SendMessage handleGetTeams(long chat_id){
+        try{
+            String textMessage = new String();
+            List<Team> teamList = teamServiceImpl.getAllTeams();
+            for (Team team : teamList) {
+                textMessage = textMessage + team.getId() + " " + team.getNameTeam()+ "\n";
+            }
+            textMessage = textMessage + "To join a team simply type JOIN_TEAM team_number (This will change your current team)";
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("These are the available teams: \n" + textMessage)
+                    .build();
+            return new_message;
+        }
+        catch (Exception e){
+            loggerHandler.error("General error", e);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+        }
+    }
+    public SendMessage handleChangeTeam(long chat_id, String team_num){
+        try {
+            Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
+            Team teamToBeAdded = teamServiceImpl.findById(Integer.valueOf(team_num));
+            modifyEmployee.setTeam(teamToBeAdded);
+            EmployeeRepository.save(modifyEmployee);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("Success!\n You are now a part of team: " + teamToBeAdded.getNameTeam())
+                    .build();
+            return new_message;
+        }
+        catch (Exception e){
+            loggerHandler.error("General error", e);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+
+        }
     }
 }
