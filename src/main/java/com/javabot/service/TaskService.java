@@ -1,6 +1,5 @@
 package com.javabot.service;
 
-import java.util.List;
 
 import com.javabot.models.Task;
 

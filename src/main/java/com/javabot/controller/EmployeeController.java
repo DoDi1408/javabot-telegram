@@ -14,7 +14,6 @@ import com.javabot.models.Task;
 import com.javabot.models.Team;
 import com.javabot.serviceimp.EmployeeRepository;
 import com.javabot.serviceimp.EmployeeServiceImpl;
-import com.javabot.serviceimp.TaskServiceImpl;
 import com.javabot.serviceimp.TeamServiceImpl;
 
 @Controller

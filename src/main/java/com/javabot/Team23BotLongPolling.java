@@ -103,6 +103,78 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     loggerBot.error("API Exception",e);
                 }
             }
+            else if (message_text.equals(BotCommands.ADD_ITEM.getCommand())){
+                SendMessage message = handler.handleAddItem(chat_id);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+            else if (message_text.equals(BotCommands.UPDATE_TASK.getCommand())){
+                SendMessage message = handler.handleUpdateTaskCommand(chat_id);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+            else if (words[0].equals(BotCommands.ADVANCE_TASK.getCommand())){
+                try {
+                    int task_id = Integer.parseInt(words[1]);
+                    SendMessage message = handler.handleUpdateTask(chat_id, task_id, true);
+                    try {
+                        telegramClient.execute(message);
+                    } catch (TelegramApiException e) {
+                        loggerBot.error("API Exception",e);
+                    }
+                } catch (NumberFormatException e) {
+                    loggerBot.error("Invalid Task Id (contains non-numeric)", e);
+                    SendMessage message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("Invalid Task Id (contains non-numeric character)")
+                    .build();
+                    try {
+                        telegramClient.execute(message);
+                    } catch (TelegramApiException error) {
+                        loggerBot.error("API Exception",error);
+                    }
+                }
+            }
+            else if (words[0].equals(BotCommands.REVERT_TASK.getCommand())){
+                try {
+                    int task_id = Integer.parseInt(words[1]);
+                    SendMessage message = handler.handleUpdateTask(chat_id, task_id, false);
+                    try {
+                        telegramClient.execute(message);
+                    } catch (TelegramApiException e) {
+                        loggerBot.error("API Exception",e);
+                    }
+                } catch (NumberFormatException e) {
+                    loggerBot.error("Invalid Task Id (contains non-numeric)", e);
+                    SendMessage message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("Invalid Task Id (contains non-numeric character)")
+                    .build();
+                    try {
+                        telegramClient.execute(message);
+                    } catch (TelegramApiException error) {
+                        loggerBot.error("API Exception",error);
+                    }
+                }
+            }
+
+            else if (words[0].equals(BotCommands.ADD_TASK.getCommand())){
+                SendMessage message = handler.addTask(chat_id, message_text, words);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+
             else if (words[0].equals(BotCommands.REGISTER_MANAGER.getCommand())){
                 String teamName = words[1];
                 SendMessage message = handler.handleRegistrationManagerReal(chat_id, update.getMessage().getFrom(), teamName);
