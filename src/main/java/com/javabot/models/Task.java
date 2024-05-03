@@ -40,7 +40,7 @@ public class Task {
     private Employee employee;
 
     public Task(){
-        
+
     }
 
     public Task(Date startDate, Date dueDate, String description, Integer stateTask, Employee employee) {

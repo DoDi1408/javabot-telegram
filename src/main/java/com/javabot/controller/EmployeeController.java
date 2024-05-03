@@ -28,17 +28,6 @@ public class EmployeeController {
   @Autowired
   private EmployeeServiceImpl employeeServiceImpl;
 
-  @PostMapping(path = "/add")
-  public @ResponseBody String addNewUser(@RequestParam String name, @RequestParam Integer teamNum) {
-    Employee n = new Employee();
-    n.setFirstName(name);
-    Team t = teamServiceImpl.findById(teamNum);
-    n.setTeam(t);
-    employeeRepository.save(n);
-    System.out.println(t);
-    return "Saved Successfully!";
-  }
-
   @GetMapping(path = "/all")
   public @ResponseBody Iterable<Employee> getAllUsers() {
     return employeeRepository.findAll();

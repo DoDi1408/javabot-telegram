@@ -63,14 +63,14 @@ public class BotHandler {
                     .build();
         return message;
     }
-    
+
     public SendMessage handleRegistrationEmployee(long chat_id, User user){
-        
+
         Employee emp = new Employee();
         emp.setFirstName(user.getFirstName());
         emp.setLastName(user.getLastName());
         emp.setTelegramId(chat_id);
-        
+
         try {
             EmployeeRepository.save(emp);
         }
@@ -193,7 +193,7 @@ public class BotHandler {
                         return new_message;
                     }
                     else {
-                        modifyEmployee.setTeam(teamToBeAdded);
+                        modifyEmployee.setTeam(teamToBeAdded.getId());
                         EmployeeRepository.save(modifyEmployee);
                         SendMessage new_message = SendMessage
                                 .builder()

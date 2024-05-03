@@ -37,15 +37,8 @@ public class Employee {
   @Column(name = "PASSWORD")
   private String password;
 
-  @ManyToOne
-  @JoinColumn(name = "ID_TEAM", referencedColumnName = "ID")
-  private Team team;
-
-  @OneToMany(mappedBy="employee", cascade=CascadeType.ALL, orphanRemoval=true)
-  private List<Task> tasks;
-
-  @OneToOne(optional=true, mappedBy = "employee")
-  private Manager manager;
+  @Column(name = "ID_TEAM")
+  private Integer team;
 
   public Employee(){
   }
@@ -96,20 +89,12 @@ public class Employee {
     this.password = password;
   }
 
-  public Team getTeam() {
+  public Integer getTeam() {
     return team;
   }
 
-  public void setTeam(Team team) {
+  public void setTeam(Integer team) {
     this.team = team;
-  }
-
-  public List<Task> getTasks() {
-    return tasks;
-  }
-
-  public void setTasks(List<Task> tasks) {
-    this.tasks = tasks;
   }
 
   @Override

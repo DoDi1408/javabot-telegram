@@ -23,15 +23,9 @@ public class Team {
     @SequenceGenerator(name = "team_seq", sequenceName = "team_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_seq")
     private Integer id;
-    
+
     @Column(name = "NAME_TEAM")
     private String nameTeam;
-
-    @OneToMany(mappedBy="team", cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER)
-    private List<Employee> employees;
-
-    @OneToOne(mappedBy="team", cascade=CascadeType.ALL, orphanRemoval=true)
-    private Manager manager;
 
     public Team(){
 
@@ -57,24 +51,8 @@ public class Team {
         this.nameTeam = nameTeam;
     }
 
-    public List<Employee> getEmployees() {
-        return employees;
-    }
-
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
-    }
-
-    public Manager getManager() {
-        return manager;
-    }
-
-    public void setManager(Manager manager) {
-        this.manager = manager;
-    }
-
     @Override
     public String toString() {
-        return "Team [id=" + id + ", nameTeam=" + nameTeam + "\n" + employees + "\n" + manager + "]";
+        return "Team [id=" + id + ", nameTeam=" + nameTeam + "]";
     }
 }
