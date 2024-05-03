@@ -14,7 +14,9 @@ public enum BotCommands {
 	ADD_TASK("ADD_TASK"),
 	UPDATE_TASK("/updateTask"),
 	ADVANCE_TASK("PROCEED_TASK"),
-	REVERT_TASK("REVERT_TASK");
+	REVERT_TASK("REVERT_TASK"),
+	DELETE_COMMAND("/deleteTask"),
+	DELETE_TASK("DELETE_TASK");
 
 	private String command;
 
