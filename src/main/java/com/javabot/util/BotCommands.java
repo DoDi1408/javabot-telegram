@@ -10,7 +10,7 @@ public enum BotCommands {
 	JOIN_TEAM_IMP("JOIN_TEAM"),
 	TODO_LIST("/todolist"),
 	TEAM_LIST("/teamlist"),
-	ADD_ITEM("/additem"),
+	ADD_ITEM("/addtask"),
 	ADD_TASK("ADD_TASK"),
 	UPDATE_TASK("/updatetask"),
 	ADVANCE_TASK("PROCEED_TASK"),
