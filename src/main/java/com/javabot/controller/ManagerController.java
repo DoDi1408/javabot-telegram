@@ -16,7 +16,7 @@ import com.javabot.models.Task;
 import com.javabot.serviceimp.ManagerServiceImpl;
 
 
-@CrossOrigin(origins = "https://frontend.romongo.uk",maxAge = 3600)
+@CrossOrigin
 @Controller
 @RequestMapping(path = "/manager")
 public class ManagerController {

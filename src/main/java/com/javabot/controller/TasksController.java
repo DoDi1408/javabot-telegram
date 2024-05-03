@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.javabot.models.Task;
 import com.javabot.serviceimp.TaskServiceImpl;
 
-@CrossOrigin(origins = "https://frontend.romongo.uk",maxAge = 3600)
+@CrossOrigin
 @Controller
 @RequestMapping(path = "/tasks")
 public class TasksController {

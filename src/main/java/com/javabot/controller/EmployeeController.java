@@ -15,7 +15,7 @@ import com.javabot.models.Task;
 import com.javabot.serviceimp.EmployeeRepository;
 import com.javabot.serviceimp.EmployeeServiceImpl;
 
-@CrossOrigin(origins = "https://frontend.romongo.uk",maxAge = 3600)
+@CrossOrigin
 @Controller
 @RequestMapping(path = "/employee")
 public class EmployeeController {
