@@ -224,13 +224,13 @@ public class BotHandler {
             String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
             for (Task task : todoList) {
                 if (task.getStateTask().equals(0)){
-                    toDoTask = toDoTask + "- " + task.getId() + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    toDoTask = toDoTask + "- " + task.getId() + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                 }
                 else if (task.getStateTask().equals(1)){
-                    inProgressTask = inProgressTask + "- " + task.getId() + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    inProgressTask = inProgressTask + "- " + task.getId() + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                 }
                 else if (task.getStateTask().equals(2)){
-                    completedTask = completedTask + "- " + task.getId() + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    completedTask = completedTask + "- " + task.getId() + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                 }
             }
             SendMessage new_message = SendMessage
@@ -285,13 +285,13 @@ public class BotHandler {
 
                 for (Task task : teamTasks) {
                     if (task.getStateTask().equals(0)){
-                    toDoTask = toDoTask + "- " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    toDoTask = toDoTask + "- " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                     }
                     else if (task.getStateTask().equals(1)){
-                        inProgressTask = inProgressTask + "- " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        inProgressTask = inProgressTask + "- " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                     }
                     else if (task.getStateTask().equals(2)){
-                        completedTask = completedTask + "- " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        completedTask = completedTask + "- " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                     }
                 }
                 SendMessage new_message = SendMessage
@@ -445,4 +445,48 @@ public class BotHandler {
             return message;
         }
     }
+    public SendMessage handleDeleteCommand (long chat_id){
+        String update = "To delete a task type DELETE_TASK and a valid task ID. \n (You can check those through the /todoList command).";
+        SendMessage message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text(update)
+                    .build();
+        return message;
+    }
+
+    public SendMessage handleDeleteTask (long chat_id, Integer task_id){
+        Task task = taskServiceImpl.findById(task_id);
+        long telegramIdOwner = task.getEmployee().getTelegramId();
+        if (telegramIdOwner == chat_id){
+            try {
+                taskServiceImpl.delete(task_id);
+                loggerHandler.info("Deleting task with id " + task_id);
+                SendMessage message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("Deleted task with id " + task_id)
+                    .build();
+                return message;
+            }
+            catch (Exception e){
+                loggerHandler.error("Error deleting task", e);
+                SendMessage message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("Internal server error.")
+                    .build();
+                return message;
+            }
+        }
+        else{
+            SendMessage message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("You cant delete a task you don't own.")
+                    .build();
+            return message;
+        }
+    }
+
 }
