@@ -9,4 +9,8 @@ public interface ManagerService extends CommonService<Manager>{
 
     List<Task> allTeamTasks(Integer id);
 
+    void createManager(String firstName, String lastName, String telegramId, String teamName);
+
+    Manager findByEmployeeId(Integer employeeId);
+
 }
