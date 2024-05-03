@@ -43,8 +43,7 @@ public class Task {
         
     }
 
-    public Task(Integer id, Date startDate, Date dueDate, String description, Integer stateTask, Employee employee) {
-        this.id = id;
+    public Task(Date startDate, Date dueDate, String description, Integer stateTask, Employee employee) {
         this.startDate = startDate;
         this.dueDate = dueDate;
         this.description = description;

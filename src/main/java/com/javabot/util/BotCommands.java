@@ -10,7 +10,13 @@ public enum BotCommands {
 	JOIN_TEAM_IMP("JOIN_TEAM"),
 	TODO_LIST("/todoList"),
 	TEAM_LIST("/teamList"),
-	ADD_ITEM("/additem");
+	ADD_ITEM("/additem"),
+	ADD_TASK("ADD_TASK"),
+	UPDATE_TASK("/updateTask"),
+	ADVANCE_TASK("PROCEED_TASK"),
+	REVERT_TASK("REVERT_TASK"),
+	DELETE_COMMAND("/deleteTask"),
+	DELETE_TASK("DELETE_TASK");
 
 	private String command;
 
