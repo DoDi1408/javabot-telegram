@@ -51,16 +51,17 @@ public class ManagerServiceImpl implements ManagerService{
     }
 
     public List<Task> allTeamTasks(Integer teamId) {
-    String sqlQuery = "SELECT t FROM Task t " +
-                      "JOIN Employee e ON t.employee.id = e.id " +
-                      "WHERE e.team.id = :teamId";
-    
-    TypedQuery<Task> theQuery = entityManager.createQuery(sqlQuery, Task.class);
-    theQuery.setParameter("teamId", teamId);
-    
-    return theQuery.getResultList();
+        String sqlQuery = "SELECT t FROM Task t " +
+                        "JOIN Employee e ON t.employee.id = e.id " +
+                        "WHERE e.team.id = :teamId";
+        
+        TypedQuery<Task> theQuery = entityManager.createQuery(sqlQuery, Task.class);
+        theQuery.setParameter("teamId", teamId);
+        
+        return theQuery.getResultList();
     }
-    
+
+    @Override
     @Transactional
     public void createManager(String firstName, String lastName, String telegramId, String teamName) {
         String insertTeamQuery = "INSERT INTO team (name_team) VALUES (?)";
@@ -75,7 +76,8 @@ public class ManagerServiceImpl implements ManagerService{
         jdbcTemplate.update(insertManagerQuery, id_employeeVAL, id_teamVAL);
  
     }
-
+    
+    @Override
     @Transactional
     public Manager findByEmployeeId(Integer employeeId){
         String sqlQuery = "SELECT m FROM Manager m " + "WHERE m.employee.id = :employeeId";
