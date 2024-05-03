@@ -53,7 +53,7 @@ public class ManagerServiceImpl implements ManagerService{
     public List<Task> allTeamTasks(Integer teamId) {
         String sqlQuery = "SELECT t FROM Task t " +
                         "JOIN Employee e ON t.employee.id = e.id " +
-                        "WHERE e.team.id = :teamId";
+                        "WHERE e.team = :teamId";
         
         TypedQuery<Task> theQuery = entityManager.createQuery(sqlQuery, Task.class);
         theQuery.setParameter("teamId", teamId);

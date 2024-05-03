@@ -21,7 +21,7 @@ public class Manager {
     @Column(name="ID")
     private int id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="ID_TEAM", referencedColumnName="id")
     private Team team;
 
