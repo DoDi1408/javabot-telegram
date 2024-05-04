@@ -42,9 +42,11 @@ public class TasksController {
     }
     @PutMapping (path = "/{taskId}/updateTask")
     public ResponseEntity<String> updateTask(@PathVariable Integer taskId, @RequestParam("state") Integer newState) {
+        /*
         final Integer ToDo = 0;
         final Integer InProgress = 1;
         final Integer Completed = 2;
+        */
         if ((newState < 0) || (newState > 3) ){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect request");
         }

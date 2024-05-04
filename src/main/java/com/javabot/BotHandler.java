@@ -172,6 +172,7 @@ public class BotHandler {
             Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
             try {
                 Manager man = managerServiceImpl.findByEmployeeId(modifyEmployee.getId());
+                loggerHandler.info(man.toString());
                 loggerHandler.info("MANAGER DETECTED, THOU CANT CHANGE TEAM");
                 SendMessage new_message = SendMessage
                     .builder()
