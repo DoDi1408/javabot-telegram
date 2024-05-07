@@ -6,10 +6,9 @@ This will not work without a wallet folder for a database connection, this walle
 * DB_CREDENTIALS_PSW
 <h1>Architecture</h1>
 
-![architecture](https://github.com/dodi1408/javabot-telegram/blob/main/architecture.jpg?raw=true)
+![architecture](https://github.com/dodi1408/javabot-telegram/blob/main/archi.png?raw=true)
 
 <h1>CI/CD</h1>
 
-![devops1](https://github.com/dodi1408/javabot-telegram/blob/main/devops1.jpg?raw=true)
+![devops](https://github.com/dodi1408/javabot-telegram/blob/main/PIPELINE.png?raw=true)
 
-![devops2](https://github.com/dodi1408/javabot-telegram/blob/main/devops2.jpg?raw=true)
