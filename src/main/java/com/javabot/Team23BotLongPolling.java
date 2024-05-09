@@ -17,6 +17,8 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import com.javabot.util.BotCommands;
 
+// DejaVuSansM Nerd Font
+// MesloLGS NF
 @Component
 public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
