@@ -216,6 +216,7 @@ public class BotHandler {
 
         }
     }
+    
     public SendMessage getTodoList(long chat_id){
         try {
             Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
@@ -324,6 +325,7 @@ public class BotHandler {
         }
 
     }
+    
     public SendMessage handleAddItem(long chat_id){
         String addItem = "To add an item: \n ADD_TASK 2099-12-31 A normal task description";
         SendMessage message = SendMessage
@@ -382,6 +384,7 @@ public class BotHandler {
             return message;
         }
     }
+    
     public SendMessage handleUpdateTaskCommand(long chat_id){
         String update = "To update a task either type PROCEED_TASK or REVERT_TASK and a valid task ID (You can check those through the /todoList command). \n A Task's Lifecycle looks like this: \n Todo -> InProgress -> Completed";
         SendMessage message = SendMessage
@@ -391,6 +394,7 @@ public class BotHandler {
                     .build();
         return message;
     }
+    
     public SendMessage handleUpdateTask(long chat_id, Integer task_id, boolean AdvanceOrGoBack){
         Task task = taskServiceImpl.findById(task_id);
         Integer stateTask = task.getStateTask();
@@ -446,6 +450,7 @@ public class BotHandler {
             return message;
         }
     }
+    
     public SendMessage handleDeleteCommand (long chat_id){
         String update = "To delete a task type DELETE_TASK and a valid task ID. \n (You can check those through the /todoList command).";
         SendMessage message = SendMessage

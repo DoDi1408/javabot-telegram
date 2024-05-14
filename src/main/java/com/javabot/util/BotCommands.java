@@ -5,18 +5,19 @@ public enum BotCommands {
 	START_COMMAND("/start"), 
 	REGISTER_EMP_COMMAND("/registeremployee"), 
 	REGISTER_MAN_COMMAND("/registermanager"),
-	REGISTER_MANAGER("REGISTER_MANAGER"),
-	JOIN_TEAM("/jointeam"),
-	JOIN_TEAM_IMP("JOIN_TEAM"),
-	TODO_LIST("/todolist"),
-	TEAM_LIST("/teamlist"),
-	ADD_ITEM("/addtask"),
-	ADD_TASK("ADD_TASK"),
-	UPDATE_TASK("/updatetask"),
-	ADVANCE_TASK("PROCEED_TASK"),
-	REVERT_TASK("REVERT_TASK"),
+	JOIN_TEAM_COMMAND("/jointeam"),
+	TODO_LIST_COMMAND("/todolist"),
+	TEAM_LIST_COMMAND("/teamlist"),
+	ADD_TASK_COMMAND("/addtask"),
+	UPDATE_TASK_COMMAND("/updatetask"),
 	DELETE_COMMAND("/deletetask"),
-	DELETE_TASK("DELETE_TASK");
+	
+	REGISTER_MANAGER_IMP("REGISTER_MANAGER"),
+	JOIN_TEAM_IMP("JOIN_TEAM"),
+	ADD_TASK_IMP("ADD_TASK"),
+	PROCEED_TASK_IMP("PROCEED_TASK"),
+	REVERT_TASK_IMP("REVERT_TASK"),
+	DELETE_TASK_IMP("DELETE_TASK");
 
 	private String command;
 
