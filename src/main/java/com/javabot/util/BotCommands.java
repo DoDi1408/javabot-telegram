@@ -2,7 +2,8 @@ package com.javabot.util;
 
 public enum BotCommands {
 
-	START_COMMAND("/start"), 
+	START_COMMAND("/start"),
+	REGISTER_COMMAND("/register"), 
 	REGISTER_EMP_COMMAND("/registeremployee"), 
 	REGISTER_MAN_COMMAND("/registermanager"),
 	JOIN_TEAM_COMMAND("/jointeam"),

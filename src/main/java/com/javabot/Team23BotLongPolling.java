@@ -61,24 +61,15 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 }
             }
 
-            else if (message_text.equals(BotCommands.REGISTER_EMP_COMMAND.getCommand())){
-                SendMessage message = handler.handleRegistrationEmployee(chat_id, update.getMessage().getFrom());
+            else if (message_text.equals(BotCommands.REGISTER_COMMAND.getCommand())) {                
+                SendMessage message = handler.handleRegistration(chat_id);
                 try {
                     telegramClient.execute(message);
                 } catch (TelegramApiException e) {
                     loggerBot.error("API Exception",e);
                 }
-            }
-
-            else if (message_text.equals(BotCommands.REGISTER_MAN_COMMAND.getCommand())){
-                SendMessage message = handler.handleRegistrationManager(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
-            }
-
+            } 
+            
             else if (message_text.equals(BotCommands.JOIN_TEAM_COMMAND.getCommand())){
                 SendMessage message = handler.handleGetTeams(chat_id);
                 try {
@@ -247,6 +238,29 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     }
             }  
         }
+        
+        else if(update.hasCallbackQuery()){
+            String callback_data = update.getCallbackQuery().getData();
+            Long chat_id = update.getCallbackQuery().getMessage().getChatId();
+            
+            if (callback_data.equals(BotCommands.REGISTER_EMP_COMMAND.getCommand())){
+                SendMessage message = handler.handleRegistrationEmployee(chat_id, update.getMessage().getFrom());
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+
+            else if (callback_data.equals(BotCommands.REGISTER_MAN_COMMAND.getCommand())){
+                SendMessage message = handler.handleRegistrationManager(chat_id);
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+        }        
     }
     
     @AfterBotRegistration
