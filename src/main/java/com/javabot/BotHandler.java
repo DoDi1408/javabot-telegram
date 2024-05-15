@@ -276,7 +276,6 @@ public class BotHandler {
             Integer tempButtons = totalTasks; 
             Integer counter = 0; 
             Integer numButtons = 0;
-
             List<InlineKeyboardRow> rows = new ArrayList<>();
             for(int i = 0; i < numRows; i++){
                 InlineKeyboardRow row = new InlineKeyboardRow();
@@ -291,7 +290,7 @@ public class BotHandler {
 
                 for(int j = 0; j < numButtons; j++){
                     InlineKeyboardButton button = new InlineKeyboardButton(String.format("%d", ++counter));
-                    button.setCallbackData("task");
+                    button.setCallbackData("getTask " + todoList.get(counter-1).getId());
                     row.add(button);
                 }
                 rows.add(row);
@@ -562,12 +561,32 @@ public class BotHandler {
 
     public SendMessage handleSendTask(long chat_id, Integer task_id){
         Task task = taskServiceImpl.findById(task_id);
-        String text =  "- " + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+        String status;
+        String toDoTask = EmojiParser.parseToUnicode("ToDo :memo: ");
+        String inProgressTask = EmojiParser.parseToUnicode("InProgress :hourglass: ");
+        String completedTask = EmojiParser.parseToUnicode("Completed :white_check_mark: ");
+        if (task.getStateTask().equals(0)){
+            status = toDoTask;
+        }
+        else if (task.getStateTask().equals(1)){
+            status = inProgressTask;
+        }
+        else {
+            status = completedTask;
+        }
+
+        
+        String text =  "<b>" + "Title: " + task.getTitle() + "</b>" + "\n" + 
+        "Description: "+ task.getDescription()+ "\n" + 
+        "Status: " + status + "\n" + 
+        "Start Date: "  + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n" +  
+        "Due Date: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
 
         SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
                     .text(text)
+                    .parseMode("HTML")
                     .build();
         return new_message;        
     }

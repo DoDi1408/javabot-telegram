@@ -244,8 +244,9 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             String callback_data = update.getCallbackQuery().getData();
             Long chat_id = update.getCallbackQuery().getMessage().getChatId();
             Integer message_id = update.getCallbackQuery().getMessage().getMessageId();
-
+            String[] words = callback_data.split(" ");
             
+            loggerBot.info(callback_data);
             if (callback_data.equals(BotCommands.REGISTER_EMP_COMMAND.getCommand())){
                 SendMessage message = handler.handleRegistrationEmployee(chat_id, update.getCallbackQuery().getFrom());
                 
@@ -280,6 +281,23 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     loggerBot.error("API Exception",e);
                 }
             }
+            else if (words[0].equals(BotCommands.SEND_TASK_COMMAND.getCommand())){
+                SendMessage message = handler.handleSendTask(chat_id,Integer.valueOf(words[1]));
+                EditMessageText edited_message = EditMessageText
+                .builder()
+                .chatId(chat_id)
+                .messageId(message_id)
+                .text("You have selected a task")
+                .build();
+                
+                try {
+                    telegramClient.execute(message);
+                    telegramClient.execute(edited_message);
+                } catch (TelegramApiException e) {
+                    loggerBot.error("API Exception",e);
+                }
+            }
+
         }        
     }
     
