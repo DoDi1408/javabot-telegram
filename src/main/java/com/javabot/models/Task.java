@@ -31,6 +31,9 @@ public class Task {
     @Column(name="DESCRIPTION_TASK")
     private String description;
 
+    @Column(name="TITLE_TASK")
+    private String title;
+
     @Column(name="STATE_TASK")
     private Integer stateTask;
 
@@ -43,11 +46,12 @@ public class Task {
 
     }
 
-    public Task(Date startDate, Date dueDate, String description, Integer stateTask, Employee employee) {
+    public Task(Date startDate, Date dueDate, String title, String description, Employee employee) {
         this.startDate = startDate;
         this.dueDate = dueDate;
+        this.title = title;
         this.description = description;
-        this.stateTask = stateTask;
+        this.stateTask = 0;
         this.employee = employee;
     }
 
@@ -81,6 +85,14 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Integer getStateTask() {

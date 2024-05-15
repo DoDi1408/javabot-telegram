@@ -418,9 +418,9 @@ public class BotHandler {
             int firstSpace = message_text.indexOf(' ');
             int secondSpace = message_text.indexOf(' ', firstSpace + 1);
 
-            String description = message_text.substring(secondSpace + 1);
+            String title = message_text.substring(secondSpace + 1);
             Date currentTime = new Date();
-            Task newTask = new Task(currentTime,date,description,0,employee);
+            Task newTask = new Task(currentTime,date,title,"",employee);
             try {
                 taskServiceImpl.create(newTask);
                 SendMessage new_message = SendMessage
