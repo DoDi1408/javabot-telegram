@@ -3,6 +3,7 @@ package com.javabot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -238,15 +239,26 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     }
             }  
         }
-        
+
         else if(update.hasCallbackQuery()){
             String callback_data = update.getCallbackQuery().getData();
             Long chat_id = update.getCallbackQuery().getMessage().getChatId();
+            Integer message_id = update.getCallbackQuery().getMessage().getMessageId();
+
             
             if (callback_data.equals(BotCommands.REGISTER_EMP_COMMAND.getCommand())){
-                SendMessage message = handler.handleRegistrationEmployee(chat_id, update.getMessage().getFrom());
+                SendMessage message = handler.handleRegistrationEmployee(chat_id, update.getCallbackQuery().getFrom());
+                
+                EditMessageText edited_message = EditMessageText
+                .builder()
+                .chatId(chat_id)
+                .messageId(message_id)
+                .text("You have choosen Employe Registration!")
+                .build();
+
                 try {
                     telegramClient.execute(message);
+                    telegramClient.execute(edited_message);
                 } catch (TelegramApiException e) {
                     loggerBot.error("API Exception",e);
                 }
@@ -254,8 +266,16 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
 
             else if (callback_data.equals(BotCommands.REGISTER_MAN_COMMAND.getCommand())){
                 SendMessage message = handler.handleRegistrationManager(chat_id);
+                EditMessageText edited_message = EditMessageText
+                .builder()
+                .chatId(chat_id)
+                .messageId(message_id)
+                .text("You have choosen Manager Registration!")
+                .build();
+                
                 try {
                     telegramClient.execute(message);
+                    telegramClient.execute(edited_message);
                 } catch (TelegramApiException e) {
                     loggerBot.error("API Exception",e);
                 }

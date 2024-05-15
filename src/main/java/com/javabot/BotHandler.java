@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.time.ZoneId;
 
+import org.apache.naming.factory.SendMailFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,6 +143,7 @@ public class BotHandler {
 
     }
     // tries to create manager, if employee already exists throws exception
+    
     public SendMessage handleRegistrationManagerReal(long chat_id, User user, String teamName){
         try {
             managerServiceImpl.createManager(user.getFirstName(),user.getLastName(), Long.toString(chat_id), teamName);
@@ -255,24 +257,56 @@ public class BotHandler {
             String toDoTask = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
             String inProgressTask = EmojiParser.parseToUnicode("InProgress tasks: :hourglass: \n");
             String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
+            Integer counter2 = 1;
+            Integer totalTasks = todoList.size();
+
             for (Task task : todoList) {
                 if (task.getStateTask().equals(0)){
-                    toDoTask = toDoTask + "- " + task.getId() + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    toDoTask = toDoTask + "- " + counter2++ + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                 }
                 else if (task.getStateTask().equals(1)){
-                    inProgressTask = inProgressTask + "- " + task.getId() + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    inProgressTask = inProgressTask + "- " + counter2++ + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                 }
                 else if (task.getStateTask().equals(2)){
-                    completedTask = completedTask + "- " + task.getId() + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    completedTask = completedTask + "- " + counter2++ + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                 }
             }
+            
+            Integer numRows = totalTasks / 4 + (totalTasks % 4 == 0 ? 0 : 1);
+            Integer tempButtons = totalTasks; 
+            Integer counter = 0; 
+            Integer numButtons = 0;
+
+            List<InlineKeyboardRow> rows = new ArrayList<>();
+            for(int i = 0; i < numRows; i++){
+                InlineKeyboardRow row = new InlineKeyboardRow();
+
+                if(tempButtons > 4){
+                    numButtons = 4;
+                    tempButtons = tempButtons - 4;
+                }
+                else{
+                    numButtons = tempButtons;
+                }
+
+                for(int j = 0; j < numButtons; j++){
+                    InlineKeyboardButton button = new InlineKeyboardButton(String.format("%d", ++counter));
+                    button.setCallbackData("task");
+                    row.add(button);
+                }
+                rows.add(row);
+            }
+            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
+                
             SendMessage new_message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text(toDoTask + inProgressTask + completedTask)
-                    .build();
+            .builder()
+            .chatId(chat_id)
+            .text(toDoTask + inProgressTask + completedTask)
+            .replyMarkup(inlineKeyboardMarkup)
+            .build();
             return new_message;
         }
+
         catch (EntityNotFoundException e) {
             loggerHandler.error("Entity not found", e);
             SendMessage new_message = SendMessage
@@ -524,6 +558,18 @@ public class BotHandler {
                     .build();
             return new_message;
         }
+    }
+
+    public SendMessage handleSendTask(long chat_id, Integer task_id){
+        Task task = taskServiceImpl.findById(task_id);
+        String text =  "- " + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+
+        SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text(text)
+                    .build();
+        return new_message;        
     }
 
 }
