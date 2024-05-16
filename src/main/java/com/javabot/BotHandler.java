@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -21,7 +22,6 @@ import com.javabot.models.Employee;
 import com.javabot.models.Manager;
 import com.javabot.models.Task;
 import com.javabot.models.Team;
-import com.javabot.serviceimp.EmployeeRepository;
 import com.javabot.serviceimp.EmployeeServiceImpl;
 import com.javabot.serviceimp.ManagerServiceImpl;
 import com.javabot.serviceimp.TaskServiceImpl;
@@ -41,9 +41,6 @@ import jakarta.persistence.NoResultException;
 public class BotHandler {
 
     private final static Logger loggerHandler = LoggerFactory.getLogger(BotHandler.class);
-
-    @Autowired
-    EmployeeRepository EmployeeRepository;
 
     @Autowired
     ManagerServiceImpl managerServiceImpl;
@@ -104,7 +101,7 @@ public class BotHandler {
         emp.setTelegramId(chat_id);
 
         try {
-            EmployeeRepository.save(emp);
+            employeeServiceImpl.create(emp);
         }
         catch (DataIntegrityViolationException e){
             loggerHandler.error("Seems like it already exists...:", e);
@@ -213,7 +210,7 @@ public class BotHandler {
     // changes team for employee, if manager doesnt allow it
     public SendMessage handleChangeTeam(long chat_id, String team_num){
         try {
-            Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
+            Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chat_id);
             try {
                 Manager man = managerServiceImpl.findByEmployeeId(modifyEmployee.getId());
                 loggerHandler.info(man.toString());
@@ -239,7 +236,7 @@ public class BotHandler {
                     }
                     else {
                         modifyEmployee.setTeam(teamToBeAdded.getId());
-                        EmployeeRepository.save(modifyEmployee);
+                        employeeServiceImpl.create(modifyEmployee);
                         SendMessage new_message = SendMessage
                                 .builder()
                                 .chatId(chat_id)
@@ -263,49 +260,45 @@ public class BotHandler {
     
     public SendMessage getTodoList(long chat_id){
         try {
-            Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
-            List<Task> todoList = employeeServiceImpl.allEmployeeTasks(modifyEmployee.getId());
+            Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chat_id);
+            List<Task> toDoList = taskServiceImpl.allEmployeeTasks(modifyEmployee.getId());
+
             String toDoTask = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
             String inProgressTask = EmojiParser.parseToUnicode("InProgress tasks: :hourglass: \n");
             String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
-            Integer counter2 = 1;
-            Integer totalTasks = todoList.size();
 
-            for (Task task : todoList) {
+            for (Task task : toDoList) {
                 if (task.getStateTask().equals(0)){
-                    toDoTask = toDoTask + "- " + counter2++ + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    toDoTask = toDoTask + "- " + " " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                 }
                 else if (task.getStateTask().equals(1)){
-                    inProgressTask = inProgressTask + "- " + counter2++ + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    inProgressTask = inProgressTask + "- " + " " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                 }
                 else if (task.getStateTask().equals(2)){
-                    completedTask = completedTask + "- " + counter2++ + " " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    completedTask = completedTask + "- " + " " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                 }
             }
             
-            Integer numRows = totalTasks / 4 + (totalTasks % 4 == 0 ? 0 : 1);
-            Integer tempButtons = totalTasks; 
-            Integer counter = 0; 
-            Integer numButtons = 0;
             List<InlineKeyboardRow> rows = new ArrayList<>();
-            for(int i = 0; i < numRows; i++){
-                InlineKeyboardRow row = new InlineKeyboardRow();
-
-                if(tempButtons > 4){
-                    numButtons = 4;
-                    tempButtons = tempButtons - 4;
-                }
-                else{
-                    numButtons = tempButtons;
-                }
-
-                for(int j = 0; j < numButtons; j++){
-                    InlineKeyboardButton button = new InlineKeyboardButton(String.format("%d", ++counter));
-                    button.setCallbackData("getTask " + todoList.get(counter-1).getId());
-                    row.add(button);
-                }
-                rows.add(row);
-            }
+            
+            InlineKeyboardRow row = new InlineKeyboardRow();
+            InlineKeyboardRow row2 = new InlineKeyboardRow();
+            
+            
+            InlineKeyboardButton buttonToDoTask = new InlineKeyboardButton(EmojiParser.parseToUnicode(":memo: ToDo Tasks"));
+            InlineKeyboardButton buttonInProgress = new InlineKeyboardButton(EmojiParser.parseToUnicode(":hourglass: InProgress"));
+            InlineKeyboardButton buttonCompleted = new InlineKeyboardButton(EmojiParser.parseToUnicode(":white_check_mark: Completed"));
+            buttonToDoTask.setCallbackData("GET_STATE_TASKS 0");
+            buttonInProgress.setCallbackData("GET_STATE_TASKS 1");
+            buttonCompleted.setCallbackData("GET_STATE_TASKS 2");
+            
+            row.add(buttonToDoTask);
+            row2.add(buttonInProgress);
+            row2.add(buttonCompleted);
+            
+            rows.add(row);
+            rows.add(row2);
+        
             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
                 
             SendMessage new_message = SendMessage
@@ -339,7 +332,7 @@ public class BotHandler {
 
     public SendMessage getTodoListTeam(long chat_id){
         try {
-            Employee modifyEmployee = EmployeeRepository.findByTelegramId(chat_id);
+            Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chat_id);
             try {
                 if (modifyEmployee == null){
                     loggerHandler.error("Entity not found");
@@ -354,7 +347,7 @@ public class BotHandler {
                 loggerHandler.info("MANAGER DETECTED, YOU CAN!! CHECK ALL TASKS OF YOUR TEAM");
 
                 Integer teamID = man.getTeam().getId();
-                List <Task> teamTasks = managerServiceImpl.allTeamTasks(teamID);
+                List <Task> teamTasks = taskServiceImpl.allTeamTasks(teamID);
 
                 String toDoTask = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
                 String inProgressTask = EmojiParser.parseToUnicode("InProgress tasks: :hourglass: \n");
@@ -415,7 +408,7 @@ public class BotHandler {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date date = dateFormat.parse(words[1]);
-            Employee employee = EmployeeRepository.findByTelegramId(chat_id);
+            Employee employee = employeeServiceImpl.findByTelegramId(chat_id);
             if (employee == null){
                 loggerHandler.error("Entity not found");
                 SendMessage new_message = SendMessage
@@ -602,4 +595,166 @@ public class BotHandler {
         return new_message;        
     }
 
+    public EditMessageText handleGetTodoListByState(long chat_id, Integer message_id, Integer task_state){
+        try {
+            Employee employee = employeeServiceImpl.findByTelegramId(chat_id);
+            List<Task> listByState = taskServiceImpl.toDoStateTasks(employee.getId(), task_state);
+
+            String toDoTaskTitle;
+            if (task_state.equals(0)){
+                toDoTaskTitle = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
+            }
+            else if (task_state.equals(1)){
+                toDoTaskTitle = EmojiParser.parseToUnicode("InProgress tasks: :hourglass: \n");
+            }
+            else {
+                toDoTaskTitle = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
+            }
+
+            Integer totalTasks = listByState.size();
+            Integer counter = 0; 
+            String tasks = toDoTaskTitle;
+            for (Task task : listByState) {
+                    tasks = tasks + "[ " + ++counter + " ] " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";  
+            }
+            
+            Integer numRows = totalTasks / 4 + (totalTasks % 4 == 0 ? 0 : 1); // 6 tasks = 2 rows
+            Integer tempButtons = totalTasks; 
+            Integer numButtons = 0;
+            List<InlineKeyboardRow> rows = new ArrayList<>();
+            
+            counter = 0;
+
+            InlineKeyboardRow rowBackButton = new InlineKeyboardRow();
+            InlineKeyboardButton buttonBack = new InlineKeyboardButton("<< Back to All Tasks");
+            buttonBack.setCallbackData("/todolist");
+            rowBackButton.add(buttonBack);
+            rows.add(rowBackButton);
+
+            for(int i = 0; i < numRows; i++){
+                InlineKeyboardRow row = new InlineKeyboardRow();
+
+                if(tempButtons > 4){
+                    numButtons = 4;
+                    tempButtons = tempButtons - 4;
+                }
+                else{
+                    numButtons = tempButtons;
+                }
+
+                for(int j = 0; j < numButtons; j++){
+                    InlineKeyboardButton button = new InlineKeyboardButton(String.format("%d", ++counter));
+                    button.setCallbackData("getTask " + listByState.get(counter-1).getId());
+                    row.add(button);
+                }
+                rows.add(row);
+            }
+            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
+                
+            EditMessageText new_message = EditMessageText
+            .builder()
+            .chatId(chat_id)
+            .messageId(message_id)
+            .text(tasks)
+            .replyMarkup(inlineKeyboardMarkup)
+            .build();
+
+            return new_message;
+        }
+        catch (EntityNotFoundException e) {
+            loggerHandler.error("Entity not found", e);
+            EditMessageText new_message = EditMessageText
+                    .builder()
+                    .chatId(chat_id)
+                    .messageId(message_id)
+                    .text("I did not find you on our internal database, are you sure you area already registered?")
+                    .build();
+            return new_message;
+        }
+        catch (Exception e){
+            loggerHandler.error("General error", e);
+            EditMessageText new_message = EditMessageText
+                    .builder()
+                    .chatId(chat_id)
+                    .messageId(message_id)
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+        }
+    }
+    
+    public EditMessageText getTodoListBack(long chat_id, Integer message_id){
+        try {
+            Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chat_id);
+            List<Task> toDoList = taskServiceImpl.allEmployeeTasks(modifyEmployee.getId());
+
+            String toDoTask = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
+            String inProgressTask = EmojiParser.parseToUnicode("InProgress tasks: :hourglass: \n");
+            String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
+
+            for (Task task : toDoList) {
+                if (task.getStateTask().equals(0)){
+                    toDoTask = toDoTask + "- " + " " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                }
+                else if (task.getStateTask().equals(1)){
+                    inProgressTask = inProgressTask + "- " + " " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                }
+                else if (task.getStateTask().equals(2)){
+                    completedTask = completedTask + "- " + " " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                }
+            }
+            
+            List<InlineKeyboardRow> rows = new ArrayList<>();
+            
+            InlineKeyboardRow row = new InlineKeyboardRow();
+            InlineKeyboardRow row2 = new InlineKeyboardRow();
+            
+            
+            InlineKeyboardButton buttonToDoTask = new InlineKeyboardButton(EmojiParser.parseToUnicode(":memo: ToDo Tasks"));
+            InlineKeyboardButton buttonInProgress = new InlineKeyboardButton(EmojiParser.parseToUnicode(":hourglass: InProgress"));
+            InlineKeyboardButton buttonCompleted = new InlineKeyboardButton(EmojiParser.parseToUnicode(":white_check_mark: Completed"));
+            buttonToDoTask.setCallbackData("GET_STATE_TASKS 0");
+            buttonInProgress.setCallbackData("GET_STATE_TASKS 1");
+            buttonCompleted.setCallbackData("GET_STATE_TASKS 2");
+            
+            row.add(buttonToDoTask);
+            row2.add(buttonInProgress);
+            row2.add(buttonCompleted);
+            
+            rows.add(row);
+            rows.add(row2);
+        
+            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
+                
+            EditMessageText new_message = EditMessageText
+            .builder()
+            .chatId(chat_id)
+            .messageId(message_id)
+            .text(toDoTask + inProgressTask + completedTask)
+            .replyMarkup(inlineKeyboardMarkup)
+            .build();
+            return new_message;
+        }
+
+        catch (EntityNotFoundException e) {
+            loggerHandler.error("Entity not found", e);
+            EditMessageText new_message = EditMessageText
+                    .builder()
+                    .chatId(chat_id)
+                    .messageId(message_id)
+                    .text("I did not find you on our internal database, are you sure you area already registered?")
+                    .build();
+            return new_message;
+        }
+        catch (Exception e){
+            loggerHandler.error("General error", e);
+            EditMessageText new_message = EditMessageText
+                    .builder()
+                    .chatId(chat_id)
+                    .messageId(message_id)
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+        }
+    }
 }

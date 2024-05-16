@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.javabot.models.Manager;
 import com.javabot.models.Task;
 import com.javabot.serviceimp.ManagerServiceImpl;
+import com.javabot.serviceimp.TaskServiceImpl;
 
 
 @CrossOrigin
@@ -25,7 +26,9 @@ public class ManagerController {
 
   @Autowired
   private ManagerServiceImpl managerServiceImpl;
-
+  
+  @Autowired
+  private TaskServiceImpl taskServiceImpl;
   
   @GetMapping(path = "/findByEmployeeId")
   public ResponseEntity<Manager> getByEmployeeId(@RequestParam("employee_id") Integer employeeId) {
@@ -49,7 +52,7 @@ public class ManagerController {
   @GetMapping(path = "/{team_id}/teamTasks")
   public ResponseEntity<Iterable<Task>> getTeamTasks(@PathVariable Integer team_id) {
     try {
-      Iterable<Task> tasks = managerServiceImpl.allTeamTasks(team_id);
+      Iterable<Task> tasks = taskServiceImpl.allTeamTasks(team_id);
       return ResponseEntity.ok(tasks);
     } 
     catch (Exception e) {

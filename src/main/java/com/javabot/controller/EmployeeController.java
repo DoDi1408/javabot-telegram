@@ -12,24 +12,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.javabot.models.Employee;
 import com.javabot.models.Task;
-import com.javabot.serviceimp.EmployeeRepository;
 import com.javabot.serviceimp.EmployeeServiceImpl;
+import com.javabot.serviceimp.TaskServiceImpl;
 
 @CrossOrigin
 @Controller
 @RequestMapping(path = "/employee")
 public class EmployeeController {
   @Autowired
-  private EmployeeRepository employeeRepository;
+  private EmployeeServiceImpl employeeServiceImpl;
 
   @Autowired
-  private EmployeeServiceImpl employeeServiceImpl;
+  private TaskServiceImpl taskSerivceImpl;
 
   
   @GetMapping(path = "/findByTelegramId")
   public ResponseEntity<Employee> getByTelegramId(@RequestParam("telegram_id") long telegramId) {
     try {
-      Employee employee = employeeRepository.findByTelegramId(telegramId);
+      Employee employee = employeeServiceImpl.findByTelegramId(telegramId);
       if (employee != null) {
         return ResponseEntity.ok(employee);
       } 
@@ -45,7 +45,7 @@ public class EmployeeController {
   @GetMapping(path = "/all")
   public ResponseEntity<Iterable<Employee>> getAllUsers() {
     try {
-      Iterable<Employee> employees = employeeRepository.findAll();
+      Iterable<Employee> employees = employeeServiceImpl.findAll();
       return ResponseEntity.ok(employees);
     } 
     catch (Exception e) {
@@ -56,7 +56,7 @@ public class EmployeeController {
   @GetMapping(path = "/{id}/tasks")
   public ResponseEntity<Iterable<Task>> getTasksByEmployee(@PathVariable Integer id) {
     try {
-      Iterable<Task> tasks = employeeServiceImpl.allEmployeeTasks(id);
+      Iterable<Task> tasks = taskSerivceImpl.allEmployeeTasks(id);
       return ResponseEntity.ok(tasks);
     } 
     catch (Exception e) {
