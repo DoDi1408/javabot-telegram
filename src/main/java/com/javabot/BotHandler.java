@@ -3,6 +3,7 @@ package com.javabot;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.time.ZoneId;
 
 import org.slf4j.Logger;
@@ -131,11 +132,12 @@ public class BotHandler {
         return new_message;
     }
 
-    public SendMessage handleRegistrationManager(long chat_id){
+    public SendMessage handleRegistrationManager(long chat_id, Map<Long , String> userStatesMap){
+        userStatesMap.put(chat_id, "REGISTER_MANAGER");
         SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text("To register as a manager send me a message like this: \n REGISTER_MANAGER Your_team_name_without_spaces")
+                    .text("Ok, now send me a team name.")
                     .build();
         return new_message;
 
@@ -143,7 +145,8 @@ public class BotHandler {
     }
     // tries to create manager, if employee already exists throws exception
     
-    public SendMessage handleRegistrationManagerReal(long chat_id, User user, String teamName){
+    public SendMessage handleRegistrationManagerReal(long chat_id, User user, String teamName, Map<Long , String> userStatesMap){
+        userStatesMap.remove(chat_id);
         try {
             managerServiceImpl.createManager(user.getFirstName(),user.getLastName(), Long.toString(chat_id), teamName);
         }
@@ -152,7 +155,7 @@ public class BotHandler {
             SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text("Oops! Seems like you have already registered before")
+                    .text("Oops! Seems like you have already registered before.")
                     .build();
             return new_message;
         }
