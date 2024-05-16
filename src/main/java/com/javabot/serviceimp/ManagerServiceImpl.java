@@ -1,13 +1,10 @@
 package com.javabot.serviceimp;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.javabot.models.Manager;
-import com.javabot.models.Task;
 import com.javabot.service.ManagerService;
 
 import jakarta.persistence.EntityManager;
@@ -48,17 +45,6 @@ public class ManagerServiceImpl implements ManagerService{
     public void delete(Integer id) {
         Manager theManager = entityManager.find(Manager.class, id);
         entityManager.remove(theManager);
-    }
-
-    public List<Task> allTeamTasks(Integer teamId) {
-        String sqlQuery = "SELECT t FROM Task t " +
-                        "JOIN Employee e ON t.employee.id = e.id " +
-                        "WHERE e.team = :teamId";
-        
-        TypedQuery<Task> theQuery = entityManager.createQuery(sqlQuery, Task.class);
-        theQuery.setParameter("teamId", teamId);
-        
-        return theQuery.getResultList();
     }
 
     @Override

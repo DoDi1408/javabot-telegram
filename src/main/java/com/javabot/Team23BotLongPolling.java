@@ -241,6 +241,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
         }
 
         else if(update.hasCallbackQuery()){
+            
             String callback_data = update.getCallbackQuery().getData();
             Long chat_id = update.getCallbackQuery().getMessage().getChatId();
             Integer message_id = update.getCallbackQuery().getMessage().getMessageId();
