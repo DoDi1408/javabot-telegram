@@ -1,5 +1,8 @@
 package com.javabot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,8 +21,6 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import com.javabot.util.BotCommands;
 
-// DejaVuSansM Nerd Font
-// MesloLGS NF
 @Component
 public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
@@ -29,6 +30,8 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
 
     private final static Logger loggerBot = LoggerFactory.getLogger(Team23BotLongPolling.class);
     
+    private Map<Long , String> userStatesMap = new HashMap<Long, String>();
+
     public Team23BotLongPolling() {
         telegramClient = new OkHttpTelegramClient(getBotToken());
     }
@@ -118,16 +121,6 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
 
             else if (message_text.equals(BotCommands.DELETE_COMMAND.getCommand())){
                 SendMessage message = handler.handleDeleteCommand(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
-            }
-            
-            else if (words[0].equals(BotCommands.REGISTER_MANAGER_IMP.getCommand())){
-                String teamName = words[1];
-                SendMessage message = handler.handleRegistrationManagerReal(chat_id, update.getMessage().getFrom(), teamName);
                 try {
                     telegramClient.execute(message);
                 } catch (TelegramApiException e) {
@@ -227,7 +220,20 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             }
 
             else{
-                SendMessage new_message = SendMessage
+                if (userStatesMap.containsKey(chat_id)){
+                    String userState = userStatesMap.get(chat_id);
+                    String[] userStateSplit = userState.split(" ");
+                    if (userStateSplit[0] == "REGISTER_MANAGER"){
+                        SendMessage message = handler.handleRegistrationManagerReal(chat_id,update.getMessage().getFrom(),message_text, userStatesMap);
+                        try {
+                            telegramClient.execute(message);
+                        } catch (TelegramApiException e) {
+                            loggerBot.error("API Exception",e);
+                        }
+                    }
+                }
+                else{
+                    SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
                     .text("I don't know how to react to that :(")
@@ -237,6 +243,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     } catch (TelegramApiException e) {
                         loggerBot.error("API Exception",e);
                     }
+                }
             }  
         }
 
@@ -247,6 +254,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             String[] words = callback_data.split(" ");
             
             loggerBot.info(callback_data);
+
             if (callback_data.equals(BotCommands.REGISTER_EMP_COMMAND.getCommand())){
                 SendMessage message = handler.handleRegistrationEmployee(chat_id, update.getCallbackQuery().getFrom());
                 
@@ -266,7 +274,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             }
 
             else if (callback_data.equals(BotCommands.REGISTER_MAN_COMMAND.getCommand())){
-                SendMessage message = handler.handleRegistrationManager(chat_id);
+                SendMessage message = handler.handleRegistrationManager(chat_id, userStatesMap);
                 EditMessageText edited_message = EditMessageText
                 .builder()
                 .chatId(chat_id)
