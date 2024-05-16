@@ -563,20 +563,17 @@ public class BotHandler {
         }
     }
 
-    public SendMessage handleSendTask(long chat_id, Integer task_id){
+    public EditMessageText handleSendTask(long chat_id, Integer task_id, Integer message_id){
         Task task = taskServiceImpl.findById(task_id);
         String status;
-        String toDoTask = EmojiParser.parseToUnicode("ToDo :memo: ");
-        String inProgressTask = EmojiParser.parseToUnicode("InProgress :hourglass: ");
-        String completedTask = EmojiParser.parseToUnicode("Completed :white_check_mark: ");
         if (task.getStateTask().equals(0)){
-            status = toDoTask;
+            status = EmojiParser.parseToUnicode("ToDo :memo: ");
         }
         else if (task.getStateTask().equals(1)){
-            status = inProgressTask;
+            status = EmojiParser.parseToUnicode("InProgress :hourglass: ");
         }
         else {
-            status = completedTask;
+            status = EmojiParser.parseToUnicode("Completed :white_check_mark: ");
         }
 
         
@@ -586,13 +583,25 @@ public class BotHandler {
         "Start Date: "  + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n" +  
         "Due Date: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
 
-        SendMessage new_message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text(text)
-                    .parseMode("HTML")
-                    .build();
-        return new_message;        
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+            
+        InlineKeyboardRow rowBackButton = new InlineKeyboardRow();
+        InlineKeyboardButton buttonBack = new InlineKeyboardButton("<< Back to "+ status + " Tasks");
+        buttonBack.setCallbackData(BotCommands.GET_STATE_TASKS_IMP.getCommand() + " " + task.getStateTask());            
+        rowBackButton.add(buttonBack);
+        rows.add(rowBackButton);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
+
+        EditMessageText new_message = EditMessageText
+            .builder()
+            .chatId(chat_id)
+            .messageId(message_id)
+            .text(text)
+            .parseMode("HTML")
+            .replyMarkup(inlineKeyboardMarkup)
+            .build();
+
+        return new_message;
     }
 
     public EditMessageText handleGetTodoListByState(long chat_id, Integer message_id, Integer task_state){
@@ -627,7 +636,7 @@ public class BotHandler {
 
             InlineKeyboardRow rowBackButton = new InlineKeyboardRow();
             InlineKeyboardButton buttonBack = new InlineKeyboardButton("<< Back to All Tasks");
-            buttonBack.setCallbackData("/todolist");
+            buttonBack.setCallbackData(BotCommands.TODO_LIST_COMMAND.getCommand());
             rowBackButton.add(buttonBack);
             rows.add(rowBackButton);
 
@@ -644,7 +653,7 @@ public class BotHandler {
 
                 for(int j = 0; j < numButtons; j++){
                     InlineKeyboardButton button = new InlineKeyboardButton(String.format("%d", ++counter));
-                    button.setCallbackData("getTask " + listByState.get(counter-1).getId());
+                    button.setCallbackData(BotCommands.GET_TASK_COMMAND.getCommand() + " " + listByState.get(counter-1).getId());
                     row.add(button);
                 }
                 rows.add(row);

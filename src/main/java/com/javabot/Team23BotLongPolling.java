@@ -228,16 +228,10 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 SendMessage message = handler.handleChangeTeam(chat_id,words[1]);
                 executeTelegramAction(message, null);
             }
-            else if (words[0].equals(BotCommands.SEND_TASK_COMMAND.getCommand())){
-                SendMessage message = handler.handleSendTask(chat_id,Integer.valueOf(words[1]));
-                EditMessageText edited_message = EditMessageText
-                .builder()
-                .chatId(chat_id)
-                .messageId(message_id)
-                .text("You have selected a task")
-                .build();
-                
-                executeTelegramAction(message, edited_message);
+            else if (words[0].equals(BotCommands.GET_TASK_COMMAND.getCommand())){
+                EditMessageText edited_message = handler.handleSendTask(chat_id,Integer.valueOf(words[1]), message_id);
+                executeTelegramAction(null, edited_message);
+            }
             else if (words[0].equals(BotCommands.GET_STATE_TASKS_IMP.getCommand())){
                 Integer task_state = Integer.parseInt(words[1]);
                 EditMessageText edited_message = handler.handleGetTodoListByState(chat_id, message_id, task_state);
@@ -246,8 +240,8 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             }
             
             else if (callback_data.equals(BotCommands.TODO_LIST_COMMAND.getCommand())){
-                EditMessageText message = handler.getTodoListBack(chat_id, message_id);
-                executeTelegramAction(message, null);
+                EditMessageText edited_message = handler.getTodoListBack(chat_id, message_id);
+                executeTelegramAction(null, edited_message);
             }
 
 

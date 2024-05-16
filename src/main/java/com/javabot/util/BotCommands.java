@@ -12,9 +12,8 @@ public enum BotCommands {
 	ADD_TASK_COMMAND("/addtask"),
 	UPDATE_TASK_COMMAND("/updatetask"),
 	DELETE_COMMAND("/deletetask"),
-	
 	GET_STATE_TASKS_IMP("GET_STATE_TASKS"),
-	// GET_TASK_COMMAND("getTask"),
+	GET_TASK_COMMAND("getTask"),
 
 	REGISTER_MANAGER_IMP("REGISTER_MANAGER"),
 	JOIN_TEAM_IMP("JOIN_TEAM"),
