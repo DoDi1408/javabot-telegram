@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.time.ZoneId;
 
-import org.apache.naming.factory.SendMailFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,14 +177,23 @@ public class BotHandler {
         try{
             String textMessage = new String();
             List<Team> teamList = teamServiceImpl.getAllTeams();
+
+            List<InlineKeyboardRow> rows = new ArrayList<>();
             for (Team team : teamList) {
                 textMessage = textMessage + team.getId() + " " + team.getNameTeam()+ "\n";
+                InlineKeyboardRow row = new InlineKeyboardRow();
+                InlineKeyboardButton button = new InlineKeyboardButton(team.getNameTeam());
+                button.setCallbackData(String.format("JOIN_TEAM %d",team.getId()));
+                row.add(button);
+                rows.add(row);
             }
-            textMessage = textMessage + "To join a team simply type JOIN_TEAM team_number (This will change your current team)";
+            textMessage = textMessage + "To join a team simply touch one of the teams!";
+            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
             SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
                     .text("These are the available teams: \n" + textMessage)
+                    .replyMarkup(inlineKeyboardMarkup)
                     .build();
             return new_message;
         }

@@ -43,6 +43,19 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
         return System.getenv("BOT_CREDENTIALS_PSW");
     }
 
+    public void executeTelegramAction(SendMessage message, EditMessageText editedMessage) {
+        try {
+            if (message != null) {
+                telegramClient.execute(message);
+            }
+            if (editedMessage != null) {
+                telegramClient.execute(editedMessage);
+            }
+        } catch (TelegramApiException e) {
+            loggerBot.error("API Exception", e);
+        }
+    }
+    
     @Override
     public void consume(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -55,103 +68,59 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
 
             if (message_text.equals(BotCommands.START_COMMAND.getCommand())){
                 SendMessage message = handler.handleStart(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }
 
             else if (message_text.equals(BotCommands.REGISTER_COMMAND.getCommand())) {                
                 SendMessage message = handler.handleRegistration(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
-            } 
+                executeTelegramAction(message, null);
+            }
             
             else if (message_text.equals(BotCommands.JOIN_TEAM_COMMAND.getCommand())){
                 SendMessage message = handler.handleGetTeams(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }
 
             else if (message_text.equals(BotCommands.TODO_LIST_COMMAND.getCommand())){
                 SendMessage message = handler.getTodoList(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }
 
             else if (message_text.equals(BotCommands.TEAM_LIST_COMMAND.getCommand())){
                 SendMessage message = handler.getTodoListTeam(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }
 
             else if (message_text.equals(BotCommands.ADD_TASK_COMMAND.getCommand())){
                 SendMessage message = handler.handleAddItem(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }
 
             else if (message_text.equals(BotCommands.UPDATE_TASK_COMMAND.getCommand())){
                 SendMessage message = handler.handleUpdateTaskCommand(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }
 
             else if (message_text.equals(BotCommands.DELETE_COMMAND.getCommand())){
                 SendMessage message = handler.handleDeleteCommand(chat_id);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }
             
             else if (words[0].equals(BotCommands.REGISTER_MANAGER_IMP.getCommand())){
                 String teamName = words[1];
                 SendMessage message = handler.handleRegistrationManagerReal(chat_id, update.getMessage().getFrom(), teamName);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }
             
             else if (words[0].equals(BotCommands.JOIN_TEAM_IMP.getCommand())){
                 String teamNum = words[1];
                 SendMessage message = handler.handleChangeTeam(chat_id, teamNum);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }
             
             else if (words[0].equals(BotCommands.ADD_TASK_IMP.getCommand())){
                 SendMessage message = handler.addTask(chat_id, message_text, words);
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, null);
             }            
             
             else if (words[0].equals(BotCommands.PROCEED_TASK_IMP.getCommand())){
@@ -170,11 +139,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     .chatId(chat_id)
                     .text("Invalid Task Id (contains non-numeric character)")
                     .build();
-                    try {
-                        telegramClient.execute(message);
-                    } catch (TelegramApiException error) {
-                        loggerBot.error("API Exception",error);
-                    }
+                    executeTelegramAction(message, null);
                 }
             }
 
@@ -182,11 +147,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 try {
                     int task_id = Integer.parseInt(words[1]);
                     SendMessage message = handler.handleUpdateTask(chat_id, task_id, false);
-                    try {
-                        telegramClient.execute(message);
-                    } catch (TelegramApiException e) {
-                        loggerBot.error("API Exception",e);
-                    }
+                    executeTelegramAction(message, null);
                 } catch (NumberFormatException e) {
                     loggerBot.error("Invalid Task Id (contains non-numeric)", e);
                     SendMessage message = SendMessage
@@ -194,11 +155,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     .chatId(chat_id)
                     .text("Invalid Task Id (contains non-numeric character)")
                     .build();
-                    try {
-                        telegramClient.execute(message);
-                    } catch (TelegramApiException error) {
-                        loggerBot.error("API Exception",error);
-                    }
+                    executeTelegramAction(message, null);
                 }
             }            
             
@@ -206,11 +163,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 try {
                     int task_id = Integer.parseInt(words[1]);
                     SendMessage message = handler.handleDeleteTask(chat_id, task_id);
-                    try {
-                        telegramClient.execute(message);
-                    } catch (TelegramApiException e) {
-                        loggerBot.error("API Exception",e);
-                    }
+                    executeTelegramAction(message, null);
                 } catch (NumberFormatException e) {
                     loggerBot.error("Invalid Task Id (contains non-numeric)", e);
                     SendMessage message = SendMessage
@@ -218,25 +171,17 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     .chatId(chat_id)
                     .text("Invalid Task Id (contains non-numeric character)")
                     .build();
-                    try {
-                        telegramClient.execute(message);
-                    } catch (TelegramApiException error) {
-                        loggerBot.error("API Exception",error);
-                    }
+                    executeTelegramAction(message, null);
                 }
             }
 
             else{
-                SendMessage new_message = SendMessage
+                SendMessage message = SendMessage
                     .builder()
                     .chatId(chat_id)
                     .text("I don't know how to react to that :(")
                     .build();
-                    try {
-                        telegramClient.execute(new_message);
-                    } catch (TelegramApiException e) {
-                        loggerBot.error("API Exception",e);
-                    }
+                    executeTelegramAction(message, null);
             }  
         }
 
@@ -256,13 +201,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 .messageId(message_id)
                 .text("You have choosen Employe Registration!")
                 .build();
-
-                try {
-                    telegramClient.execute(message);
-                    telegramClient.execute(edited_message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, edited_message);
             }
 
             else if (callback_data.equals(BotCommands.REGISTER_MAN_COMMAND.getCommand())){
@@ -274,12 +213,11 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 .text("You have choosen Manager Registration!")
                 .build();
                 
-                try {
-                    telegramClient.execute(message);
-                    telegramClient.execute(edited_message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, edited_message);
+            }
+            else if (words[0].equals(BotCommands.JOIN_TEAM_IMP.getCommand())){
+                SendMessage message = handler.handleChangeTeam(chat_id,words[1]);
+                executeTelegramAction(message, null);
             }
             else if (words[0].equals(BotCommands.SEND_TASK_COMMAND.getCommand())){
                 SendMessage message = handler.handleSendTask(chat_id,Integer.valueOf(words[1]));
@@ -290,12 +228,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 .text("You have selected a task")
                 .build();
                 
-                try {
-                    telegramClient.execute(message);
-                    telegramClient.execute(edited_message);
-                } catch (TelegramApiException e) {
-                    loggerBot.error("API Exception",e);
-                }
+                executeTelegramAction(message, edited_message);
             }
 
         }        
