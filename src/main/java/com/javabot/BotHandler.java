@@ -3,6 +3,7 @@ package com.javabot;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.time.ZoneId;
 
 import org.slf4j.Logger;
@@ -128,11 +129,12 @@ public class BotHandler {
         return new_message;
     }
 
-    public SendMessage handleRegistrationManager(long chat_id){
+    public SendMessage handleRegistrationManager(long chat_id, Map<Long , String> userStatesMap){
+        userStatesMap.put(chat_id, "REGISTER_MANAGER");
         SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text("To register as a manager send me a message like this: \n REGISTER_MANAGER Your_team_name_without_spaces")
+                    .text("Ok, now send me a team name.")
                     .build();
         return new_message;
 
@@ -140,7 +142,8 @@ public class BotHandler {
     }
     // tries to create manager, if employee already exists throws exception
     
-    public SendMessage handleRegistrationManagerReal(long chat_id, User user, String teamName){
+    public SendMessage handleRegistrationManagerReal(long chat_id, User user, String teamName, Map<Long , String> userStatesMap){
+        userStatesMap.remove(chat_id);
         try {
             managerServiceImpl.createManager(user.getFirstName(),user.getLastName(), Long.toString(chat_id), teamName);
         }
@@ -149,7 +152,7 @@ public class BotHandler {
             SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text("Oops! Seems like you have already registered before")
+                    .text("Oops! Seems like you have already registered before.")
                     .build();
             return new_message;
         }
@@ -174,14 +177,23 @@ public class BotHandler {
         try{
             String textMessage = new String();
             List<Team> teamList = teamServiceImpl.getAllTeams();
+
+            List<InlineKeyboardRow> rows = new ArrayList<>();
             for (Team team : teamList) {
                 textMessage = textMessage + team.getId() + " " + team.getNameTeam()+ "\n";
+                InlineKeyboardRow row = new InlineKeyboardRow();
+                InlineKeyboardButton button = new InlineKeyboardButton(team.getNameTeam());
+                button.setCallbackData(String.format("JOIN_TEAM %d",team.getId()));
+                row.add(button);
+                rows.add(row);
             }
-            textMessage = textMessage + "To join a team simply type JOIN_TEAM team_number (This will change your current team)";
+            textMessage = textMessage + "To join a team simply touch one of the teams!";
+            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
             SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
                     .text("These are the available teams: \n" + textMessage)
+                    .replyMarkup(inlineKeyboardMarkup)
                     .build();
             return new_message;
         }
