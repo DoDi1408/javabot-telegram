@@ -178,11 +178,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                     String[] userStateSplit = userState.split(" ");
                     if (userStateSplit[0] == "REGISTER_MANAGER"){
                         SendMessage message = handler.handleRegistrationManagerReal(chat_id,update.getMessage().getFrom(),message_text, userStatesMap);
-                        try {
-                            telegramClient.execute(message);
-                        } catch (TelegramApiException e) {
-                            loggerBot.error("API Exception",e);
-                        }
+                        executeTelegramAction(message, null);
                     }
                 }
                 else{
