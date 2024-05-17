@@ -98,16 +98,6 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 SendMessage message = handler.handleAddItem(chat_id);
                 executeTelegramAction(message, null);
             }
-
-            else if (message_text.equals(BotCommands.UPDATE_TASK_COMMAND.getCommand())){
-                SendMessage message = handler.handleUpdateTaskCommand(chat_id);
-                executeTelegramAction(message, null);
-            }
-
-            // else if (message_text.equals(BotCommands.DELETE_COMMAND.getCommand())){
-            //     SendMessage message = handler.handleDeleteCommand(chat_id);
-            //     executeTelegramAction(message, null);
-            // }
             
             else if (words[0].equals(BotCommands.JOIN_TEAM_IMP.getCommand())){
                 String teamNum = words[1];
@@ -120,37 +110,37 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 executeTelegramAction(message, null);
             }            
             
-            else if (words[0].equals(BotCommands.PROCEED_TASK_IMP.getCommand())){
-                try {
-                    int task_id = Integer.parseInt(words[1]);
-                    SendMessage message = handler.handleUpdateTask(chat_id, task_id, true);
-                    executeTelegramAction(message, null);
-                } catch (NumberFormatException e) {
-                    loggerBot.error("Invalid Task Id (contains non-numeric)", e);
-                    SendMessage message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text("Invalid Task Id (contains non-numeric character)")
-                    .build();
-                    executeTelegramAction(message, null);
-                }
-            }
+            // else if (words[0].equals(BotCommands.PROCEED_TASK_IMP.getCommand())){
+            //     try {
+            //         int task_id = Integer.parseInt(words[1]);
+            //         SendMessage message = handler.handleUpdateTask(chat_id, task_id, true);
+            //         executeTelegramAction(message, null);
+            //     } catch (NumberFormatException e) {
+            //         loggerBot.error("Invalid Task Id (contains non-numeric)", e);
+            //         SendMessage message = SendMessage
+            //         .builder()
+            //         .chatId(chat_id)
+            //         .text("Invalid Task Id (contains non-numeric character)")
+            //         .build();
+            //         executeTelegramAction(message, null);
+            //     }
+            // }
 
-            else if (words[0].equals(BotCommands.REVERT_TASK_IMP.getCommand())){
-                try {
-                    int task_id = Integer.parseInt(words[1]);
-                    SendMessage message = handler.handleUpdateTask(chat_id, task_id, false);
-                    executeTelegramAction(message, null);
-                } catch (NumberFormatException e) {
-                    loggerBot.error("Invalid Task Id (contains non-numeric)", e);
-                    SendMessage message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text("Invalid Task Id (contains non-numeric character)")
-                    .build();
-                    executeTelegramAction(message, null);
-                }
-            }            
+            // else if (words[0].equals(BotCommands.REVERT_TASK_IMP.getCommand())){
+            //     try {
+            //         int task_id = Integer.parseInt(words[1]);
+            //         SendMessage message = handler.handleUpdateTask(chat_id, task_id, false);
+            //         executeTelegramAction(message, null);
+            //     } catch (NumberFormatException e) {
+            //         loggerBot.error("Invalid Task Id (contains non-numeric)", e);
+            //         SendMessage message = SendMessage
+            //         .builder()
+            //         .chatId(chat_id)
+            //         .text("Invalid Task Id (contains non-numeric character)")
+            //         .build();
+            //         executeTelegramAction(message, null);
+            //     }
+            // }            
 
             else{
                 if (userStatesMap.containsKey(chat_id)){

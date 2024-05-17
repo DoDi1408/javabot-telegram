@@ -380,76 +380,10 @@ public class BotHandler {
         }
     }
     
-    public SendMessage handleUpdateTaskCommand(long chat_id){
-        String update = "To update a task either type PROCEED_TASK or REVERT_TASK and a valid task ID (You can check those through the /todoList command). \n A Task's Lifecycle looks like this: \n Todo -> InProgress -> Completed";
-        SendMessage new_message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text(update)
-                    .build();
-        return new_message;
-    }
-
     public void handleUpdate(Integer task_id, Integer state){
         Task task = taskServiceImpl.findById(task_id);
         task.setStateTask(state);
         taskServiceImpl.update(task);
-    }
-
-    public SendMessage handleUpdateTask(long chat_id, Integer task_id, boolean AdvanceOrGoBack){
-        Task task = taskServiceImpl.findById(task_id);
-        Integer stateTask = task.getStateTask();
-        long telegramIdOwner = task.getEmployee().getTelegramId();
-        if (telegramIdOwner == chat_id){
-            if (AdvanceOrGoBack){
-                if (stateTask == 2){
-                    SendMessage new_message = SendMessage
-                        .builder()
-                        .chatId(chat_id)
-                        .text("Completed is the highest stage in a task's lifecycle.")
-                        .build();
-                    return new_message;
-                }
-                else{
-                    task.setStateTask(stateTask+1);
-                    taskServiceImpl.update(task);
-                    SendMessage new_message = SendMessage
-                        .builder()
-                        .chatId(chat_id)
-                        .text("Advanced task with id " + task.getId())
-                        .build();
-                    return new_message;
-                }
-            }
-            else {
-                if (stateTask == 0){
-                    SendMessage new_message = SendMessage
-                        .builder()
-                        .chatId(chat_id)
-                        .text("ToDo is the lowest stage in a task's lifecycle.")
-                        .build();
-                    return new_message;
-                }
-                else{
-                    task.setStateTask(stateTask-1);
-                    taskServiceImpl.update(task);
-                    SendMessage new_message = SendMessage
-                        .builder()
-                        .chatId(chat_id)
-                        .text("Reverted task with id " + task.getId())
-                        .build();
-                    return new_message;
-                }
-            }
-        }
-        else {
-            SendMessage new_message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text("You cant modify a task you don't own.")
-                    .build();
-            return new_message;
-        }
     }
     
     public void handleDeleteTask (Integer task_id){
