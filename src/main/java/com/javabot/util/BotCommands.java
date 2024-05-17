@@ -20,7 +20,12 @@ public enum BotCommands {
 	ADD_TASK_IMP("ADD_TASK"),
 	PROCEED_TASK_IMP("PROCEED_TASK"),
 	REVERT_TASK_IMP("REVERT_TASK"),
-	DELETE_TASK_IMP("DELETE_TASK");
+	DELETE_TASK_IMP("DELETE_TASK"),
+	
+	DELETE_TASK("Delete"),
+	TODO_TASK("ToDo"),
+	INPROGRESS_TASK("Inprogress"),
+	COMPLETE_TASK("Complete");
 
 	private String command;
 
