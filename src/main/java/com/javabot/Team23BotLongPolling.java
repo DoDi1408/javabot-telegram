@@ -109,39 +109,6 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 SendMessage message = handler.addTask(chat_id, message_text, words);
                 executeTelegramAction(message, null);
             }            
-            
-            // else if (words[0].equals(BotCommands.PROCEED_TASK_IMP.getCommand())){
-            //     try {
-            //         int task_id = Integer.parseInt(words[1]);
-            //         SendMessage message = handler.handleUpdateTask(chat_id, task_id, true);
-            //         executeTelegramAction(message, null);
-            //     } catch (NumberFormatException e) {
-            //         loggerBot.error("Invalid Task Id (contains non-numeric)", e);
-            //         SendMessage message = SendMessage
-            //         .builder()
-            //         .chatId(chat_id)
-            //         .text("Invalid Task Id (contains non-numeric character)")
-            //         .build();
-            //         executeTelegramAction(message, null);
-            //     }
-            // }
-
-            // else if (words[0].equals(BotCommands.REVERT_TASK_IMP.getCommand())){
-            //     try {
-            //         int task_id = Integer.parseInt(words[1]);
-            //         SendMessage message = handler.handleUpdateTask(chat_id, task_id, false);
-            //         executeTelegramAction(message, null);
-            //     } catch (NumberFormatException e) {
-            //         loggerBot.error("Invalid Task Id (contains non-numeric)", e);
-            //         SendMessage message = SendMessage
-            //         .builder()
-            //         .chatId(chat_id)
-            //         .text("Invalid Task Id (contains non-numeric character)")
-            //         .build();
-            //         executeTelegramAction(message, null);
-            //     }
-            // }            
-
             else{
                 if (userStatesMap.containsKey(chat_id)){
                     String userState = userStatesMap.get(chat_id);
