@@ -85,7 +85,7 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             }
 
             else if (message_text.equals(BotCommands.TODO_LIST_COMMAND.getCommand())){
-                SendMessage message = handler.getTodoList(chat_id);
+                SendMessage message = (SendMessage) handler.getTodoList(chat_id, null);
                 executeTelegramAction(message, null);
             }
 
@@ -96,16 +96,6 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
 
             else if (message_text.equals(BotCommands.ADD_TASK_COMMAND.getCommand())){
                 SendMessage message = handler.handleAddItem(chat_id);
-                executeTelegramAction(message, null);
-            }
-
-            else if (message_text.equals(BotCommands.UPDATE_TASK_COMMAND.getCommand())){
-                SendMessage message = handler.handleUpdateTaskCommand(chat_id);
-                executeTelegramAction(message, null);
-            }
-
-            else if (message_text.equals(BotCommands.DELETE_COMMAND.getCommand())){
-                SendMessage message = handler.handleDeleteCommand(chat_id);
                 executeTelegramAction(message, null);
             }
             
@@ -120,57 +110,37 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 executeTelegramAction(message, null);
             }            
             
-            else if (words[0].equals(BotCommands.PROCEED_TASK_IMP.getCommand())){
-                try {
-                    int task_id = Integer.parseInt(words[1]);
-                    SendMessage message = handler.handleUpdateTask(chat_id, task_id, true);
-                    try {
-                        telegramClient.execute(message);
-                    } catch (TelegramApiException e) {
-                        loggerBot.error("API Exception",e);
-                    }
-                } catch (NumberFormatException e) {
-                    loggerBot.error("Invalid Task Id (contains non-numeric)", e);
-                    SendMessage message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text("Invalid Task Id (contains non-numeric character)")
-                    .build();
-                    executeTelegramAction(message, null);
-                }
-            }
+            // else if (words[0].equals(BotCommands.PROCEED_TASK_IMP.getCommand())){
+            //     try {
+            //         int task_id = Integer.parseInt(words[1]);
+            //         SendMessage message = handler.handleUpdateTask(chat_id, task_id, true);
+            //         executeTelegramAction(message, null);
+            //     } catch (NumberFormatException e) {
+            //         loggerBot.error("Invalid Task Id (contains non-numeric)", e);
+            //         SendMessage message = SendMessage
+            //         .builder()
+            //         .chatId(chat_id)
+            //         .text("Invalid Task Id (contains non-numeric character)")
+            //         .build();
+            //         executeTelegramAction(message, null);
+            //     }
+            // }
 
-            else if (words[0].equals(BotCommands.REVERT_TASK_IMP.getCommand())){
-                try {
-                    int task_id = Integer.parseInt(words[1]);
-                    SendMessage message = handler.handleUpdateTask(chat_id, task_id, false);
-                    executeTelegramAction(message, null);
-                } catch (NumberFormatException e) {
-                    loggerBot.error("Invalid Task Id (contains non-numeric)", e);
-                    SendMessage message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text("Invalid Task Id (contains non-numeric character)")
-                    .build();
-                    executeTelegramAction(message, null);
-                }
-            }            
-            
-            else if (words[0].equals(BotCommands.DELETE_TASK_IMP.getCommand())){
-                try {
-                    int task_id = Integer.parseInt(words[1]);
-                    SendMessage message = handler.handleDeleteTask(chat_id, task_id);
-                    executeTelegramAction(message, null);
-                } catch (NumberFormatException e) {
-                    loggerBot.error("Invalid Task Id (contains non-numeric)", e);
-                    SendMessage message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text("Invalid Task Id (contains non-numeric character)")
-                    .build();
-                    executeTelegramAction(message, null);
-                }
-            }
+            // else if (words[0].equals(BotCommands.REVERT_TASK_IMP.getCommand())){
+            //     try {
+            //         int task_id = Integer.parseInt(words[1]);
+            //         SendMessage message = handler.handleUpdateTask(chat_id, task_id, false);
+            //         executeTelegramAction(message, null);
+            //     } catch (NumberFormatException e) {
+            //         loggerBot.error("Invalid Task Id (contains non-numeric)", e);
+            //         SendMessage message = SendMessage
+            //         .builder()
+            //         .chatId(chat_id)
+            //         .text("Invalid Task Id (contains non-numeric character)")
+            //         .build();
+            //         executeTelegramAction(message, null);
+            //     }
+            // }            
 
             else{
                 if (userStatesMap.containsKey(chat_id)){
@@ -203,7 +173,6 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
 
             if (callback_data.equals(BotCommands.REGISTER_EMP_COMMAND.getCommand())){
                 SendMessage message = handler.handleRegistrationEmployee(chat_id, update.getCallbackQuery().getFrom());
-                
                 EditMessageText edited_message = EditMessageText
                 .builder()
                 .chatId(chat_id)
@@ -221,13 +190,14 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 .messageId(message_id)
                 .text("You have choosen Manager Registration!")
                 .build();
-                
                 executeTelegramAction(message, edited_message);
             }
+
             else if (words[0].equals(BotCommands.JOIN_TEAM_IMP.getCommand())){
                 SendMessage message = handler.handleChangeTeam(chat_id,words[1]);
                 executeTelegramAction(message, null);
             }
+
             else if (words[0].equals(BotCommands.GET_TASK_COMMAND.getCommand())){
                 EditMessageText edited_message = handler.handleSendTask(chat_id,Integer.valueOf(words[1]), message_id);
                 executeTelegramAction(null, edited_message);
@@ -235,33 +205,33 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             else if (words[0].equals(BotCommands.GET_STATE_TASKS_IMP.getCommand())){
                 Integer task_state = Integer.parseInt(words[1]);
                 EditMessageText edited_message = handler.handleGetTodoListByState(chat_id, message_id, task_state);
-              
                 executeTelegramAction(null, edited_message);
             }
             
             else if (callback_data.equals(BotCommands.TODO_LIST_COMMAND.getCommand())){
-                EditMessageText edited_message = handler.getTodoListBack(chat_id, message_id);
+                EditMessageText edited_message = (EditMessageText) handler.getTodoList(chat_id, message_id);
                 executeTelegramAction(null, edited_message);
             }
-
-
-            // else if (words[0].equals(BotCommands.GET_TASK_COMMAND.getCommand())){
-            //     SendMessage message = handler.handleSendTask(chat_id,Integer.valueOf(words[1]));
-            //     EditMessageText edited_message = EditMessageText
-            //     .builder()
-            //     .chatId(chat_id)
-            //     .messageId(message_id)
-            //     .text("You have selected a task")
-            //     .build();
-                
-            //     try {
-            //         telegramClient.execute(message);
-            //         telegramClient.execute(edited_message);
-            //     } catch (TelegramApiException e) {
-            //         loggerBot.error("API Exception",e);
-            //     }
-            // }
-
+            else if(words[0].equals(BotCommands.DELETE_TASK.getCommand())){
+                handler.handleDeleteTask(Integer.parseInt(words[1]));
+                EditMessageText edited_message = (EditMessageText) handler.getTodoList(chat_id, message_id);
+                executeTelegramAction(null, edited_message);
+            }
+            else if(words[0].equals(BotCommands.COMPLETE_TASK.getCommand())){
+                handler.handleUpdate(Integer.parseInt(words[1]), 2);
+                EditMessageText edited_message = (EditMessageText) handler.getTodoList(chat_id, message_id);
+                executeTelegramAction(null, edited_message);
+            }
+            else if(words[0].equals(BotCommands.INPROGRESS_TASK.getCommand())){
+                handler.handleUpdate(Integer.parseInt(words[1]), 1);
+                EditMessageText edited_message = (EditMessageText) handler.getTodoList(chat_id, message_id);
+                executeTelegramAction(null, edited_message);
+            }
+            else if(words[0].equals(BotCommands.TODO_TASK.getCommand())){
+                handler.handleUpdate(Integer.parseInt(words[1]), 0);
+                EditMessageText edited_message = (EditMessageText) handler.getTodoList(chat_id, message_id);
+                executeTelegramAction(null, edited_message);
+            }
         }        
     }
     
