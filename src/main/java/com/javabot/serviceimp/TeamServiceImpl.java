@@ -48,8 +48,7 @@ public class TeamServiceImpl implements TeamService{
     @Override
     @Transactional
     public List<Employee> teamEmployees(Integer id) {
-        TypedQuery<Employee> theQuery = entityManager.createQuery("SELECT e FROM Employee e WHERE e.team.id =:teamId",
-        Employee.class);
+        TypedQuery<Employee> theQuery = entityManager.createQuery("SELECT e FROM Employee e WHERE e.team = :teamId", Employee.class);
         theQuery.setParameter("teamId", id);
         return theQuery.getResultList();
     }

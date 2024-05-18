@@ -90,18 +90,13 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             }
 
             else if (message_text.equals(BotCommands.TEAM_LIST_COMMAND.getCommand())){
-                SendMessage message = handler.getTodoListTeam(chat_id);
+                loggerBot.info(message_text);
+                SendMessage message = (SendMessage) handler.getTodoListTeam(chat_id, null);
                 executeTelegramAction(message, null);
             }
 
             else if (message_text.equals(BotCommands.ADD_TASK_COMMAND.getCommand())){
                 SendMessage message = handler.handleAddItem(chat_id);
-                executeTelegramAction(message, null);
-            }
-            
-            else if (words[0].equals(BotCommands.JOIN_TEAM_IMP.getCommand())){
-                String teamNum = words[1];
-                SendMessage message = handler.handleChangeTeam(chat_id, teamNum);
                 executeTelegramAction(message, null);
             }
             
@@ -169,6 +164,18 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 EditMessageText edited_message = handler.handleSendTask(chat_id,Integer.valueOf(words[1]), message_id);
                 executeTelegramAction(null, edited_message);
             }
+
+            else if (callback_data.equals(BotCommands.TEAM_LIST_COMMAND.getCommand())){
+                loggerBot.info(callback_data);
+                EditMessageText edited_message = (EditMessageText) handler.getTodoListTeam(chat_id, message_id);
+                executeTelegramAction(null, edited_message);
+            }
+
+            else if (words[0].equals(BotCommands.GET_EMPLOYEE_TASK.getCommand())){
+                EditMessageText edited_message = handler.handleSendEmployeeTask(chat_id,Integer.valueOf(words[1]), message_id);
+                executeTelegramAction(null, edited_message);
+            }
+
             else if (words[0].equals(BotCommands.GET_STATE_TASKS_IMP.getCommand())){
                 Integer task_state = Integer.parseInt(words[1]);
                 EditMessageText edited_message = handler.handleGetTodoListByState(chat_id, message_id, task_state);
