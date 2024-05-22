@@ -41,25 +41,30 @@ public class ManagerController {
   @GetMapping(path = "/teamTasks")
   public ResponseEntity<?> getTeamTasks(@RequestHeader(value = "token", required = true) String authToken) {
     loggerManager.info("Received getTeamTasks");
-    ResponseEntity<Employee> employeeResponse = authService.getEmployeeFromJWT(authToken);
-
-    if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
-      try {
-        @SuppressWarnings("null")
-        Manager teamManager = managerServiceImpl.findByEmployeeId(employeeResponse.getBody().getId());
-        Iterable<Task> tasks = taskServiceImpl.allTeamTasks(teamManager.getTeam().getId());
-        for (Task task : tasks) {
-          task.getEmployee().setPassword("hidden");
+    try {
+      ResponseEntity<Employee> employeeResponse = authService.getEmployeeFromJWT(authToken);
+      if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
+        String token = employeeResponse.getHeaders().getFirst("token");
+        try {
+          @SuppressWarnings("null")
+          Manager teamManager = managerServiceImpl.findByEmployeeId(employeeResponse.getBody().getId());
+          Iterable<Task> tasks = taskServiceImpl.allTeamTasks(teamManager.getTeam().getId());
+          for (Task task : tasks) {
+            task.getEmployee().setPassword("hidden");
+          }
+          return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
         }
-        return ResponseEntity.ok(tasks);
+        catch (NoResultException nre){
+          loggerManager.error("not a manager", nre);
+          return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
       }
-      catch (NoResultException nre){
-        loggerManager.error("not a manager", nre);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-      }
-
+      return employeeResponse;
     }
-    return employeeResponse;
+    catch (Exception e){
+      loggerManager.error("general error",e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
   }
 
 }
