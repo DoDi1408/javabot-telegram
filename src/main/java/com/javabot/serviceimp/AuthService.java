@@ -14,7 +14,7 @@ import com.javabot.models.Employee;
 @Component
 public class AuthService {
 
-    private final String authURL = "http://localhost:8081";
+    private final String authURL = "http://auth-app-service:8080";
     private final static Logger loggerAuthService = LoggerFactory.getLogger(AuthService.class);
 
     public String createJWTfromEmployee(Employee employee){
