@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-cluster
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "api.romongo.uk"
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: javabot-springboot-service
+              port:
+                number: 8080
+  - host: "frontend.romongo.uk"
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: react-frontend-service
+              port:
+                number: 80
+## RECUERDA SI QUIERES HACER LLAMADAS A OTRO CLUSER IP DENTRO DEL MISMO NAMESPACE: http://<myservice>.svc.cluster.local:SERVICEPORT
+# ejemplo que ya probe desde una pod http://javabot-springboot-service:8080/demo/all

@@ -54,6 +54,14 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
+    public Employee findByEmail(String email){
+        String sqlQuery = "SELECT e FROM Employee e WHERE e.email = :email";
+        TypedQuery<Employee> theQuery = entityManager.createQuery(sqlQuery, Employee.class);
+        theQuery.setParameter("email", email);
+        return theQuery.getSingleResult();
+    }
+
+    @Override
     public List<Employee> findAll() {
         String sqlQuery = "SELECT e FROM Employee e";
         TypedQuery<Employee> theQuery = entityManager.createQuery(sqlQuery, Employee.class);

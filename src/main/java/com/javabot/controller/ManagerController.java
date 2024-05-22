@@ -8,13 +8,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.javabot.models.Employee;
 import com.javabot.models.Manager;
 import com.javabot.models.Task;
+import com.javabot.serviceimp.AuthService;
 import com.javabot.serviceimp.ManagerServiceImpl;
 import com.javabot.serviceimp.TaskServiceImpl;
+
+import jakarta.persistence.NoResultException;
 
 
 @CrossOrigin
@@ -30,34 +35,32 @@ public class ManagerController {
   @Autowired
   private TaskServiceImpl taskServiceImpl;
   
-  @GetMapping(path = "/findByEmployeeId")
-  public ResponseEntity<Manager> getByEmployeeId(@RequestParam("employee_id") Integer employeeId) {
-    loggerManager.info("Received findEyEmployeeId");
-    try {
-      Manager manager = managerServiceImpl.findByEmployeeId(employeeId);
-      if (manager != null) {
-        return ResponseEntity.ok(manager);
-      } 
-      else {
-        return ResponseEntity.notFound().build();
-      }
-    } 
-    catch (Exception e) {
-      loggerManager.error("An error ocurred: ",e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-  }
+  @Autowired
+  private AuthService authService;
 
   // obten team_id de hacer el get anterior
-  @GetMapping(path = "/{team_id}/teamTasks")
-  public ResponseEntity<Iterable<Task>> getTeamTasks(@PathVariable Integer team_id) {
-    try {
-      Iterable<Task> tasks = taskServiceImpl.allTeamTasks(team_id);
-      return ResponseEntity.ok(tasks);
-    } 
-    catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+  @GetMapping(path = "/teamTasks")
+  public ResponseEntity<?> getTeamTasks(@RequestHeader(value = "token", required = true) String authToken) {
+    loggerManager.info("Received getTeamTasks");
+    ResponseEntity<Employee> employeeResponse = authService.getEmployeeFromJWT(authToken);
+
+    if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
+      try {
+        @SuppressWarnings("null")
+        Manager teamManager = managerServiceImpl.findByEmployeeId(employeeResponse.getBody().getId());
+        Iterable<Task> tasks = taskServiceImpl.allTeamTasks(teamManager.getTeam().getId());
+        for (Task task : tasks) {
+          task.getEmployee().setPassword("hidden");
+        }
+        return ResponseEntity.ok(tasks);
+      }
+      catch (NoResultException nre){
+        loggerManager.error("not a manager", nre);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+      }
+
     }
+    return employeeResponse;
   }
 
 }

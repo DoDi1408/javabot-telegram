@@ -33,6 +33,17 @@ public class Employee {
   @Column(name = "ID_TEAM")
   private Integer team;
 
+  @Column(name = "EMAIL")
+  private String email;
+  
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
   public Employee(){
   }
 
