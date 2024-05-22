@@ -222,28 +222,26 @@ public class BotHandler {
                 return new_message;
             }
             catch (NoResultException e){
-                loggerHandler.error("Manager does not exist (Thats good)", e);
-                    Team teamToBeAdded = teamServiceImpl.findById(Integer.valueOf(team_num));
-                    if (teamToBeAdded == null){
-                        loggerHandler.error("Team does not exist (Thats bad)");
-                        SendMessage new_message = SendMessage
-                        .builder()
-                        .chatId(chat_id)
-                        .text("That team does not exist")
-                        .build();
-                        return new_message;
-                    }
-                    else {
-                        modifyEmployee.setTeam(teamToBeAdded.getId());
-                        employeeServiceImpl.create(modifyEmployee);
-                        SendMessage new_message = SendMessage
-                                .builder()
-                                .chatId(chat_id)
-                                .text("Success!\n You are now a part of team: " + teamToBeAdded.getNameTeam())
-                                .build();
-                        return new_message;
-                    }
+                loggerHandler.info("Manager does not exist (Thats good)", e);
+                Team teamToBeAdded = teamServiceImpl.findById(Integer.valueOf(team_num));
+                modifyEmployee.setTeam(teamToBeAdded.getId());
+                employeeServiceImpl.update(modifyEmployee);
+                SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("Success!\n You are now a part of team: " + teamToBeAdded.getNameTeam())
+                    .build();
+                return new_message;  
             }
+        }
+        catch (NoResultException nre){
+            loggerHandler.error("not registered error", nre);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("You have not registered yet")
+                    .build();
+            return new_message;
         }
         catch (Exception e){
             loggerHandler.error("General error", e);
@@ -253,27 +251,18 @@ public class BotHandler {
                     .text("500: Internal Server Error, sorry :(")
                     .build();
             return new_message;
-
         }
     }
 
-    public SendMessage getTodoListTeam(long chat_id){
+    public Object getTodoListTeam(long chat_id, Integer messageId){
         try {
             Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chat_id);
             try {
-                if (modifyEmployee == null){
-                    loggerHandler.error("Entity not found");
-                    SendMessage new_message = SendMessage
-                            .builder()
-                            .chatId(chat_id)
-                            .text("I did not find you on our internal database, are you sure you area already registered?")
-                            .build();
-                    return new_message;
-                }
-                Manager man = managerServiceImpl.findByEmployeeId(modifyEmployee.getId());
+                Manager manager = managerServiceImpl.findByEmployeeId(modifyEmployee.getId());
                 loggerHandler.info("MANAGER DETECTED, YOU CAN!! CHECK ALL TASKS OF YOUR TEAM");
-
-                Integer teamID = man.getTeam().getId();
+                
+                Integer teamID = manager.getTeam().getId();
+                List<Employee> allEmployees = teamServiceImpl.teamEmployees(teamID);
                 List <Task> teamTasks = taskServiceImpl.allTeamTasks(teamID);
 
                 String toDoTask = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
@@ -282,21 +271,43 @@ public class BotHandler {
 
                 for (Task task : teamTasks) {
                     if (task.getStateTask().equals(0)){
-                    toDoTask = toDoTask + "- " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    toDoTask = toDoTask + "- " + task.getTitle()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                     }
                     else if (task.getStateTask().equals(1)){
-                        inProgressTask = inProgressTask + "- " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        inProgressTask = inProgressTask + "- " + task.getDescription()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                     }
                     else if (task.getStateTask().equals(2)){
-                        completedTask = completedTask + "- " + task.getDescription()+ " " + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + " - "  + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        completedTask = completedTask + "- " + task.getDescription()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                     }
                 }
-                SendMessage new_message = SendMessage
-                        .builder()
-                        .chatId(chat_id)
-                        .text(toDoTask + inProgressTask + completedTask)
-                        .build();
-                return new_message;
+
+                List<InlineKeyboardRow> rows = new ArrayList<>();
+
+                for(Employee employee : allEmployees){
+                    InlineKeyboardRow row = new InlineKeyboardRow();
+                    InlineKeyboardButton button = new InlineKeyboardButton(employee.getFirstName());
+                    button.setCallbackData(BotCommands.GET_EMPLOYEE_TASK.getCommand() + " " + employee.getId());
+                    row.add(button);
+                    rows.add(row);
+                }
+                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
+
+                if (messageId == null) {
+                    return SendMessage
+                            .builder()
+                            .chatId(chat_id)
+                            .text(toDoTask + inProgressTask + completedTask)
+                            .replyMarkup(inlineKeyboardMarkup)
+                            .build();
+                } else { 
+                    return EditMessageText
+                            .builder()
+                            .chatId(chat_id)
+                            .messageId(messageId)
+                            .text(toDoTask + inProgressTask + completedTask)
+                            .replyMarkup(inlineKeyboardMarkup)
+                            .build();
+                }
             }
             catch (NoResultException notManagerError){
                 loggerHandler.error("YOU ARE NOT A MANAGER!!! REEEW", notManagerError);
@@ -307,18 +318,54 @@ public class BotHandler {
                     .build();
                 return new_message;
             }
-        }
-        catch (Exception e){
+        } catch (EntityNotFoundException e) {
+            loggerHandler.error("Entity not found", e);
+        } catch (Exception e) {
             loggerHandler.error("General error", e);
-            SendMessage new_message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text("500: Internal Server Error, sorry :(")
-                    .build();
-            return new_message;
-
         }
+        return null;
+    }
 
+    public EditMessageText handleSendEmployeeTask(long chat_id, Integer employee_id, Integer message_id){
+        try {
+            List<Task> toDoList = taskServiceImpl.allEmployeeTasks(employee_id);
+            String toDoTask = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
+            String inProgressTask = EmojiParser.parseToUnicode("InProgress tasks: :hourglass: \n");
+            String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
+    
+            for (Task task : toDoList) {
+                if (task.getStateTask().equals(0)){
+                    toDoTask = toDoTask + "- " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                } else if (task.getStateTask().equals(1)){
+                    inProgressTask = inProgressTask + "- " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                } else if (task.getStateTask().equals(2)){
+                    completedTask = completedTask + "- " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                }
+            }
+            List<InlineKeyboardRow> rows = new ArrayList<>();
+            InlineKeyboardRow rowBackButton = new InlineKeyboardRow();
+            InlineKeyboardButton buttonBack = new InlineKeyboardButton("<< Back to All Tasks");
+            buttonBack.setCallbackData(BotCommands.TEAM_LIST_COMMAND.getCommand());
+            rowBackButton.add(buttonBack);
+            rows.add(rowBackButton);
+            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
+
+            EditMessageText new_message = EditMessageText
+            .builder()
+            .chatId(chat_id)
+            .messageId(message_id)
+            .text(toDoTask + inProgressTask + completedTask)
+            .replyMarkup(inlineKeyboardMarkup)
+            .build();
+
+            return new_message;
+        }
+        catch (EntityNotFoundException e) {
+            loggerHandler.error("Entity not found", e);
+        } catch (Exception e) {
+            loggerHandler.error("General error", e);
+        }
+        return null;
     }
     
     public SendMessage handleAddItem(long chat_id){
@@ -387,7 +434,8 @@ public class BotHandler {
     }
     
     public void handleDeleteTask (Integer task_id){
-        taskServiceImpl.findById(task_id);
+        taskServiceImpl.delete(task_id);
+
     }
 
     public EditMessageText handleSendTask(long chat_id, Integer task_id, Integer message_id){
@@ -399,21 +447,21 @@ public class BotHandler {
         
         if (task.getStateTask().equals(0)){
             status = EmojiParser.parseToUnicode("ToDo :memo: ");
-            textLarge = EmojiParser.parseToUnicode("Inprogress");
-            textFirstHalf = EmojiParser.parseToUnicode("Complete");
-            textSecondHalf = EmojiParser.parseToUnicode("Delete");
+            textLarge = EmojiParser.parseToUnicode(":hourglass: Inprogress");
+            textFirstHalf = EmojiParser.parseToUnicode(":white_check_mark: Complete");
+            textSecondHalf = EmojiParser.parseToUnicode(":wastebasket: Delete");
         }
         else if (task.getStateTask().equals(1)){
-            status = EmojiParser.parseToUnicode("InProgress :hourglass: ");
-            textLarge = EmojiParser.parseToUnicode("Complete");
-            textFirstHalf = EmojiParser.parseToUnicode("ToDo");
-            textSecondHalf = EmojiParser.parseToUnicode("Delete");
+            status = EmojiParser.parseToUnicode("InProgress :hourglass:");
+            textLarge = EmojiParser.parseToUnicode(":white_check_mark: Complete");
+            textFirstHalf = EmojiParser.parseToUnicode(":memo: ToDo");
+            textSecondHalf = EmojiParser.parseToUnicode(":wastebasket: Delete");
         }
         else {
-            status = EmojiParser.parseToUnicode("Completed :white_check_mark: ");
-            textLarge = EmojiParser.parseToUnicode("Delete");
-            textFirstHalf = EmojiParser.parseToUnicode("Inprogress");
-            textSecondHalf = EmojiParser.parseToUnicode("ToDo");
+            status = EmojiParser.parseToUnicode("Completed :white_check_mark:");
+            textLarge = EmojiParser.parseToUnicode(":wastebasket: Delete");
+            textFirstHalf = EmojiParser.parseToUnicode(":hourglass: Inprogress");
+            textSecondHalf = EmojiParser.parseToUnicode(":memo: ToDo");
         }
         
         List<InlineKeyboardRow> rows = new ArrayList<>();
@@ -428,9 +476,9 @@ public class BotHandler {
         InlineKeyboardButton buttonSecondHalf = new InlineKeyboardButton(textSecondHalf);
 
         buttonBack.setCallbackData(BotCommands.GET_STATE_TASKS_IMP.getCommand() + " " + task.getStateTask());            
-        buttonLarge.setCallbackData(textLarge + " " + task_id);
-        buttonFirstHalf.setCallbackData(textFirstHalf + " " + task_id);
-        buttonSecondHalf.setCallbackData(textSecondHalf + " " + task_id);
+        buttonLarge.setCallbackData(textLarge.split("\\s+")[1] + " " + task_id);
+        buttonFirstHalf.setCallbackData(textFirstHalf.split("\\s+")[1] + " " + task_id);
+        buttonSecondHalf.setCallbackData(textSecondHalf.split("\\s+")[1] + " " + task_id);
         
         rowBackButton.add(buttonBack);
         rowHalfsButton.add(buttonFirstHalf);
@@ -551,9 +599,9 @@ public class BotHandler {
         }
     }
     
-    public Object getTodoList(long chatId, Integer messageId) {
+    public Object getTodoList(long chat_id, Integer messageId) {
         try {
-            Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chatId);
+            Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chat_id);
             List<Task> toDoList = taskServiceImpl.allEmployeeTasks(modifyEmployee.getId());
             
             if(toDoList.size() != 0){
@@ -595,14 +643,14 @@ public class BotHandler {
                 if (messageId == null) {
                     return SendMessage
                             .builder()
-                            .chatId(chatId)
+                            .chatId(chat_id)
                             .text(toDoTask + inProgressTask + completedTask)
                             .replyMarkup(inlineKeyboardMarkup)
                             .build();
                 } else { 
                     return EditMessageText
                             .builder()
-                            .chatId(chatId)
+                            .chatId(chat_id)
                             .messageId(messageId)
                             .text(toDoTask + inProgressTask + completedTask)
                             .replyMarkup(inlineKeyboardMarkup)
@@ -620,7 +668,7 @@ public class BotHandler {
 
                 return EditMessageText
                             .builder()
-                            .chatId(chatId)
+                            .chatId(chat_id)
                             .messageId(messageId)
                             .text("Your task list is empty!")
                             .replyMarkup(inlineKeyboardMarkup)
