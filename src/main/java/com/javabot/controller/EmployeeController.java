@@ -1,9 +1,12 @@
 package com.javabot.controller;
 
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -131,7 +134,9 @@ public class EmployeeController {
         for (Task task : tasks) {
           task.getEmployee().setPassword("hidden");
         }
-        return ResponseEntity.ok(tasks);
+        List<String> token = employeeResponse.getHeaders().get("token");
+        loggerEmpController.info(token.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(tasks);
       }
       return employeeResponse;
     } 
