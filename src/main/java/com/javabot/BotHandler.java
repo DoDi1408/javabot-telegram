@@ -344,7 +344,7 @@ public class BotHandler {
             }
             List<InlineKeyboardRow> rows = new ArrayList<>();
             InlineKeyboardRow rowBackButton = new InlineKeyboardRow();
-            InlineKeyboardButton buttonBack = new InlineKeyboardButton("<< Back to All Tasks");
+            InlineKeyboardButton buttonBack = new InlineKeyboardButton("<< Back to All Team Tasks");
             buttonBack.setCallbackData(BotCommands.TEAM_LIST_COMMAND.getCommand());
             rowBackButton.add(buttonBack);
             rows.add(rowBackButton);
