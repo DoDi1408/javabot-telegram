@@ -8,5 +8,7 @@ public interface EmployeeService extends CommonService<Employee>{
 
     Employee findByTelegramId(long telegramId);
 
+    Employee findByEmail(String email);
+    
     List<Employee> findAll();
 }
