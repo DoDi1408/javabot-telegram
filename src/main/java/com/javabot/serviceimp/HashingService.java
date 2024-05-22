@@ -13,13 +13,15 @@ public class HashingService {
     // Generates a hashed string
     public String generateHashFromPassword(String password){
         BcryptFunction bcrypt = BcryptFunction.getInstance(Bcrypt.B,12);
-        Hash hash = Password.hash(password).addPepper("test-pepper").with(bcrypt);
+        String pepper = System.getenv("PASSWORD_PEPPER");
+        Hash hash = Password.hash(password).addPepper(pepper).with(bcrypt);
         return hash.getResult();
     }
     
     public boolean verifyHash(String hashedPassword, String plainTextPassword){
         BcryptFunction bcrypt = BcryptFunction.getInstance(Bcrypt.B,12);
-        return Password.check(plainTextPassword, hashedPassword).addPepper("test-pepper").with(bcrypt);
+        String pepper = System.getenv("PASSWORD_PEPPER");
+        return Password.check(plainTextPassword, hashedPassword).addPepper(pepper).with(bcrypt);
     }
 
 }

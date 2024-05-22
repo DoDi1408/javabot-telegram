@@ -23,6 +23,8 @@ spec:
             name: database-credentials
         - secretRef:
             name: bot-info
+        - secretRef:
+            name: secret-pepper
       imagePullSecrets:  
       - name: ocirsecret  
 
