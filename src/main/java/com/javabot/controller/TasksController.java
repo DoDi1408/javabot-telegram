@@ -20,8 +20,6 @@ import com.javabot.models.Task;
 import com.javabot.serviceimp.AuthService;
 import com.javabot.serviceimp.TaskServiceImpl;
 
-import jakarta.persistence.NoResultException;
-
 @CrossOrigin
 @Controller
 @RequestMapping(path = "/tasks")
@@ -67,7 +65,7 @@ public class TasksController {
         final Integer Completed = 2;
         */
 
-        if ((newState < 0) || (newState > 3) ){
+        if ((newState < 0) || (newState > 2) ){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect request, task state must be between 0 and 2");
         }
 
@@ -78,6 +76,10 @@ public class TasksController {
 
         try {
             Task theTask = taskServiceImpl.findById(taskId);
+            if (theTask == null){
+                loggerTasks.error("task id not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("task not found");
+            }
             if (theTask.getEmployee().getId() != employeeResponse.getBody().getId()){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not the task owner");
             }
@@ -85,11 +87,8 @@ public class TasksController {
             taskServiceImpl.update(theTask);
             return ResponseEntity.ok("Success");
         } 
-        catch(NoResultException nre){
-            loggerTasks.error("task id not found",nre);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("task not found");
-        }
         catch (Exception e) {
+            loggerTasks.error("server error", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failure");
         }
     }
