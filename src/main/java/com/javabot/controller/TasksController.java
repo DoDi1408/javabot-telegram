@@ -67,7 +67,7 @@ public class TasksController {
         final Integer Completed = 2;
         */
 
-        if ((newState < 0) || (newState > 3) ){
+        if ((newState < 0) || (newState > 2) ){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect request, task state must be between 0 and 2");
         }
 
