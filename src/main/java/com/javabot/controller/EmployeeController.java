@@ -29,116 +29,116 @@ import jakarta.persistence.NoResultException;
 @RequestMapping(path = "/employee")
 public class EmployeeController {
 
-  @Autowired
-  private EmployeeServiceImpl employeeServiceImpl;
+    @Autowired
+    private EmployeeServiceImpl employeeServiceImpl;
 
-  @Autowired
-  private TaskServiceImpl taskServiceImpl;
+    @Autowired
+    private TaskServiceImpl taskServiceImpl;
 
-  @Autowired
-  private AuthService authService;
-  
-  @Autowired
-  private HashingService hashingService;
+    @Autowired
+    private AuthService authService;
+    
+    @Autowired
+    private HashingService hashingService;
 
-  private final static Logger loggerEmpController = LoggerFactory.getLogger(EmployeeController.class);
+    private final static Logger loggerEmpController = LoggerFactory.getLogger(EmployeeController.class);
 
 
-  @PostMapping(path = "/register")
-  public ResponseEntity<?> completeEmployeeResgistration(@RequestBody loginForm registrationForm) {
+    @PostMapping(path = "/register")
+    public ResponseEntity<?> completeEmployeeResgistration(@RequestBody loginForm registrationForm) {
 
-    loggerEmpController.info("received a /register");
+        loggerEmpController.info("received a /register");
 
-    if (registrationForm.getTelegramId() == null || registrationForm.getPassword() == null || registrationForm.getEmail() == null) {
-      loggerEmpController.error("bad request");
-      return ResponseEntity.badRequest().body("Telegram ID, password and email must be provided");
-    }
-
-    try {
-      Employee employee = employeeServiceImpl.findByTelegramId(Long.valueOf(registrationForm.getTelegramId()).longValue());
-
-      String email = registrationForm.getEmail();
-      String password = registrationForm.getPassword();
-
-      loggerEmpController.info("hashing password");
-      String hashedPassword = hashingService.generateHashFromPassword(password);
-
-      
-      employee.setPassword(hashedPassword);
-      employee.setEmail(email);
-
-      employeeServiceImpl.update(employee);
-      
-      employee.setPassword("hidden");
-
-      String jwt = authService.createJWTfromEmployee(employee);
-      return ResponseEntity.status(HttpStatus.CREATED).body(jwt);
-
-    }
-    catch (NoResultException nre){
-      loggerEmpController.error("telegram id not found",nre);
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("telegram id not found");
-    }
-    catch (Exception e) {
-      loggerEmpController.error("general error",e);
-      return ResponseEntity.internalServerError().build();
-    }
-  }
-
-  @PostMapping(path = "/login")
-  public ResponseEntity<?> employeeLogin(@RequestBody loginForm loginForm) {
-
-    loggerEmpController.info("received a /login");
-
-    if (loginForm.getPassword() == null || loginForm.getEmail() == null) {
-      loggerEmpController.error("bad request");
-      return ResponseEntity.badRequest().body("Email and password must be provided");
-    }
-
-    try {
-      Employee employee = employeeServiceImpl.findByEmail(loginForm.getEmail());
-      String hashedPassword = employee.getPassword();
-      String password = loginForm.getPassword();
-
-      if (hashingService.verifyHash(hashedPassword, password)){
-        loggerEmpController.info("password hash verified");
-        employee.setPassword("hidden");
-        String jwt = authService.createJWTfromEmployee(employee);
-        return ResponseEntity.ok().body(jwt);
-      }
-      loggerEmpController.error("error hashing, possibly incorrect password");
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Incorrect Password");
-      
-    }
-    catch (NoResultException nre){
-      loggerEmpController.error("email not found",nre);
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("email not found");
-    }
-    catch (Exception e) {
-      loggerEmpController.error("general error",e);
-      return ResponseEntity.internalServerError().build();
-    }
-  }
-
-  @SuppressWarnings({ "unchecked", "null" })
-  @GetMapping(path = "/tasks")
-  public ResponseEntity<?> getTasksByEmployee(@RequestHeader(value = "token", required = true) String authToken) {
-    try {
-      ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
-      
-      if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
-        Iterable<Task> tasks = taskServiceImpl.allEmployeeTasks(employeeResponse.getBody().getId());
-        for (Task task : tasks) {
-          task.getEmployee().setPassword("hidden");
+        if (registrationForm.getTelegramId() == null || registrationForm.getPassword() == null || registrationForm.getEmail() == null) {
+        loggerEmpController.error("bad request");
+        return ResponseEntity.badRequest().body("Telegram ID, password and email must be provided");
         }
-        String token = employeeResponse.getHeaders().getFirst("token");
-        return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
-      }
-      return employeeResponse;
-    } 
-    catch (Exception e) {
-      loggerEmpController.error("general error", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        try {
+        Employee employee = employeeServiceImpl.findByTelegramId(Long.valueOf(registrationForm.getTelegramId()).longValue());
+
+        String email = registrationForm.getEmail();
+        String password = registrationForm.getPassword();
+
+        loggerEmpController.info("hashing password");
+        String hashedPassword = hashingService.generateHashFromPassword(password);
+
+        
+        employee.setPassword(hashedPassword);
+        employee.setEmail(email);
+
+        employeeServiceImpl.update(employee);
+        
+        employee.setPassword("hidden");
+
+        String jwt = authService.createJWTfromEmployee(employee);
+        return ResponseEntity.status(HttpStatus.CREATED).body(jwt);
+
+        }
+        catch (NoResultException nre){
+        loggerEmpController.error("telegram id not found",nre);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("telegram id not found");
+        }
+        catch (Exception e) {
+        loggerEmpController.error("general error",e);
+        return ResponseEntity.internalServerError().build();
+        }
     }
-  }
+
+    @PostMapping(path = "/login")
+    public ResponseEntity<?> employeeLogin(@RequestBody loginForm loginForm) {
+
+        loggerEmpController.info("received a /login");
+
+        if (loginForm.getPassword() == null || loginForm.getEmail() == null) {
+        loggerEmpController.error("bad request");
+        return ResponseEntity.badRequest().body("Email and password must be provided");
+        }
+
+        try {
+        Employee employee = employeeServiceImpl.findByEmail(loginForm.getEmail());
+        String hashedPassword = employee.getPassword();
+        String password = loginForm.getPassword();
+
+        if (hashingService.verifyHash(hashedPassword, password)){
+            loggerEmpController.info("password hash verified");
+            employee.setPassword("hidden");
+            String jwt = authService.createJWTfromEmployee(employee);
+            return ResponseEntity.ok().body(jwt);
+        }
+        loggerEmpController.error("error hashing, possibly incorrect password");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Incorrect Password");
+        
+        }
+        catch (NoResultException nre){
+        loggerEmpController.error("email not found",nre);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("email not found");
+        }
+        catch (Exception e) {
+        loggerEmpController.error("general error",e);
+        return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "null" })
+    @GetMapping(path = "/tasks")
+    public ResponseEntity<?> getTasksByEmployee(@RequestHeader(value = "token", required = true) String authToken) {
+        try {
+        ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
+        
+        if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
+            Iterable<Task> tasks = taskServiceImpl.allEmployeeTasks(employeeResponse.getBody().getId());
+            for (Task task : tasks) {
+            task.getEmployee().setPassword("hidden");
+            }
+            String token = employeeResponse.getHeaders().getFirst("token");
+            return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
+        }
+        return employeeResponse;
+        } 
+        catch (Exception e) {
+        loggerEmpController.error("general error", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
