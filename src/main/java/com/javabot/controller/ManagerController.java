@@ -57,7 +57,7 @@ public class ManagerController {
         }
         catch (NoResultException nre){
           loggerManager.error("not a manager", nre);
-          return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+          return ResponseEntity.status(HttpStatus.FORBIDDEN).body("not a manager");
         }
       }
       return employeeResponse;

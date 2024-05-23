@@ -77,7 +77,7 @@ public class EmployeeController {
     }
     catch (NoResultException nre){
       loggerEmpController.error("telegram id not found",nre);
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("telegram id not found");
     }
     catch (Exception e) {
       loggerEmpController.error("general error",e);
@@ -107,12 +107,12 @@ public class EmployeeController {
         return ResponseEntity.ok().body(jwt);
       }
       loggerEmpController.error("error hashing, possibly incorrect password");
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Incorrect Password");
       
     }
     catch (NoResultException nre){
       loggerEmpController.error("email not found",nre);
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("email not found");
     }
     catch (Exception e) {
       loggerEmpController.error("general error",e);
@@ -120,14 +120,13 @@ public class EmployeeController {
     }
   }
 
+  @SuppressWarnings({ "unchecked", "null" })
   @GetMapping(path = "/tasks")
   public ResponseEntity<?> getTasksByEmployee(@RequestHeader(value = "token", required = true) String authToken) {
     try {
-      @SuppressWarnings("unchecked")
       ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
       
       if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
-        @SuppressWarnings("null")
         Iterable<Task> tasks = taskServiceImpl.allEmployeeTasks(employeeResponse.getBody().getId());
         for (Task task : tasks) {
           task.getEmployee().setPassword("hidden");
