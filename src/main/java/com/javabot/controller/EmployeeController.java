@@ -123,7 +123,9 @@ public class EmployeeController {
   @GetMapping(path = "/tasks")
   public ResponseEntity<?> getTasksByEmployee(@RequestHeader(value = "token", required = true) String authToken) {
     try {
+      @SuppressWarnings("unchecked")
       ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
+      
       if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
         @SuppressWarnings("null")
         Iterable<Task> tasks = taskServiceImpl.allEmployeeTasks(employeeResponse.getBody().getId());
