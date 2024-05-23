@@ -24,7 +24,7 @@ public class AuthService {
         return restTemplate.postForEntity(authURL + "/auth/create", request, String.class).getBody();
     }
 
-    public ResponseEntity<Employee> getEmployeeFromJWT(String jwt){
+    public ResponseEntity<?> getEmployeeFromJWT(String jwt){
         loggerAuthService.info("Making a verify request to AuthService");
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> request = new HttpEntity<String>(jwt);
@@ -34,11 +34,11 @@ public class AuthService {
         }
         catch (HttpClientErrorException rce){
             loggerAuthService.error("4xx Error Code",rce);
-            return ResponseEntity.status(rce.getStatusCode()).build();
+            return ResponseEntity.status(rce.getStatusCode()).body(rce.getResponseBodyAsString());
         }
         catch (HttpServerErrorException seex){
             loggerAuthService.error("5xx Error Code",seex);
-            return ResponseEntity.status(seex.getStatusCode()).build();
+            return ResponseEntity.status(seex.getStatusCode()).body(seex.getResponseBodyAsString());
         }
     }
 }

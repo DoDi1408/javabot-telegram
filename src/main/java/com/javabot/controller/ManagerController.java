@@ -42,7 +42,7 @@ public class ManagerController {
   public ResponseEntity<?> getTeamTasks(@RequestHeader(value = "token", required = true) String authToken) {
     loggerManager.info("Received getTeamTasks");
     try {
-      ResponseEntity<Employee> employeeResponse = authService.getEmployeeFromJWT(authToken);
+      ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
       if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
         String token = employeeResponse.getHeaders().getFirst("token");
         try {
