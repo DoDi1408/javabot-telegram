@@ -393,7 +393,7 @@ public class BotHandler {
                 RestTemplate restTemplate = new RestTemplate();
                 HttpEntity<String> request = new HttpEntity<String>(message_text);
         
-                Task taskResponse = restTemplate.postForEntity("http://auth-app-service:8080/task", request, Task.class).getBody();
+                Task taskResponse = restTemplate.postForEntity("http://openai-flask-service:8080/task", request, Task.class).getBody();
                 loggerHandler.info(taskResponse.toString());
                 taskResponse.setEmployee(employee);
                 taskServiceImpl.create(taskResponse);
