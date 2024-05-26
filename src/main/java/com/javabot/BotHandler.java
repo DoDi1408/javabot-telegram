@@ -392,14 +392,14 @@ public class BotHandler {
             RestTemplate restTemplate = new RestTemplate();
             HttpEntity<String> request = new HttpEntity<String>(message_text);
     
-            Task taskResponse = restTemplate.postForEntity("http://auth-app-service:8080/task", request, Task.class).getBody();
+            Task taskResponse = restTemplate.postForEntity("http://auth-app-service:9000/task", request, Task.class).getBody();
             taskResponse.setEmployee(employee);
             taskServiceImpl.create(taskResponse);
         }).start();
         SendMessage new_message = SendMessage
             .builder()
             .chatId(chat_id)
-            .text("Successfully added a new task!")
+            .text("Adding task... this might take a couple seconds.")
             .build();
         return new_message;
     }
