@@ -389,12 +389,18 @@ public class BotHandler {
                 return new_message;
         }
         new Thread(() -> {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpEntity<String> request = new HttpEntity<String>(message_text);
-    
-            Task taskResponse = restTemplate.postForEntity("http://auth-app-service:9000/task", request, Task.class).getBody();
-            taskResponse.setEmployee(employee);
-            taskServiceImpl.create(taskResponse);
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                HttpEntity<String> request = new HttpEntity<String>(message_text);
+        
+                Task taskResponse = restTemplate.postForEntity("http://auth-app-service:8080/task", request, Task.class).getBody();
+                loggerHandler.info(taskResponse.toString());
+                taskResponse.setEmployee(employee);
+                taskServiceImpl.create(taskResponse);
+            }
+            catch (Exception e) {
+                loggerHandler.error("thread error", e);
+            }
         }).start();
         SendMessage new_message = SendMessage
             .builder()
