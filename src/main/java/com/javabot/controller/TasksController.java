@@ -79,10 +79,11 @@ public class TasksController {
             if (theTask.getEmployee().getId() != employeeResponse.getBody().getId()){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not the task owner");
             }
-
+            String token = employeeResponse.getHeaders().getFirst("token");
+            
             task.setEmployee(employeeResponse.getBody());
             taskServiceImpl.update(task);
-            return ResponseEntity.ok("Success");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).header("token", token).build();
         } 
         catch (Exception e) {
             loggerTasks.error("server error", e);

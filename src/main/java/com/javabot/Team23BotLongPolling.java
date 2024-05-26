@@ -96,20 +96,19 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
             }
 
             else if (message_text.equals(BotCommands.ADD_TASK_COMMAND.getCommand())){
-                SendMessage message = handler.handleAddItem(chat_id);
+                SendMessage message = handler.handleAddTask(chat_id, userStatesMap);
                 executeTelegramAction(message, null);
             }
-            
-            else if (words[0].equals(BotCommands.ADD_TASK_IMP.getCommand())){
-                SendMessage message = handler.addTask(chat_id, message_text, words);
-                executeTelegramAction(message, null);
-            }            
+                 
             else{
                 if (userStatesMap.containsKey(chat_id)){
                     String userState = userStatesMap.get(chat_id);
-                    String[] userStateSplit = userState.split(" ");
-                    if (userStateSplit[0] == "REGISTER_MANAGER"){
+                    if (userState == "REGISTER_MANAGER"){
                         SendMessage message = handler.handleRegistrationManagerReal(chat_id,update.getMessage().getFrom(),message_text, userStatesMap);
+                        executeTelegramAction(message, null);
+                    }
+                    else if (userState == "ADDING_TASK"){
+                        SendMessage message = handler.addTask(chat_id, message_text, userStatesMap);
                         executeTelegramAction(message, null);
                     }
                 }

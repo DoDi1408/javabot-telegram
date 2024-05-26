@@ -1,7 +1,6 @@
 package com.javabot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.time.ZoneId;
@@ -10,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -28,9 +29,6 @@ import com.javabot.serviceimp.TaskServiceImpl;
 import com.javabot.serviceimp.TeamServiceImpl;
 import com.javabot.util.BotCommands;
 import com.vdurmont.emoji.EmojiParser;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 
 
@@ -368,8 +366,9 @@ public class BotHandler {
         return null;
     }
     
-    public SendMessage handleAddItem(long chat_id){
-        String addItem = "To add an item: \n ADD_TASK 2099-12-31 A normal task description";
+    public SendMessage handleAddTask(long chat_id, Map<Long , String> userStatesMap){
+        userStatesMap.put(chat_id, "ADDING_TASK");
+        String addItem = "To add a task simply send me a task description, a title, and a due date and start date";
         SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
@@ -378,53 +377,31 @@ public class BotHandler {
         return new_message;
     }
 
-    public SendMessage addTask(long chat_id, String message_text, String[] words){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date date = dateFormat.parse(words[1]);
-            Employee employee = employeeServiceImpl.findByTelegramId(chat_id);
-            if (employee == null){
-                loggerHandler.error("Entity not found");
-                SendMessage new_message = SendMessage
-                        .builder()
-                        .chatId(chat_id)
-                        .text("I did not find you on our internal database, are you sure you area already registered?")
-                        .build();
-                return new_message;
-            }
-            int firstSpace = message_text.indexOf(' ');
-            int secondSpace = message_text.indexOf(' ', firstSpace + 1);
-
-            String title = message_text.substring(secondSpace + 1);
-            Date currentTime = new Date();
-            Task newTask = new Task(currentTime,date,title,"",employee);
-            try {
-                taskServiceImpl.create(newTask);
-                SendMessage new_message = SendMessage
-                            .builder()
-                            .chatId(chat_id)
-                            .text("Successfully added a new task!")
-                            .build();
-                return new_message;
-            }
-            catch (Exception e){
-                loggerHandler.error("Some unknown error occurred",e);
-                SendMessage new_message = SendMessage
-                            .builder()
-                            .chatId(chat_id)
-                            .text("Internal server error")
-                            .build();
-                return new_message;
-            }
-        }
-        catch (ParseException e){
+    public SendMessage addTask(long chat_id, String message_text, Map<Long , String> userStatesMap){
+        userStatesMap.remove(chat_id);
+        Employee employee = employeeServiceImpl.findByTelegramId(chat_id);
+        if (employee == null){
+            loggerHandler.error("Entity not found");
             SendMessage new_message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text("Incorrect date format")
-                    .build();
-            return new_message;
+                .builder()
+                .chatId(chat_id)
+                .text("I did not find you on our internal database, are you sure you area already registered?")                        .build();
+                return new_message;
         }
+        new Thread(() -> {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<String> request = new HttpEntity<String>(message_text);
+    
+            Task taskResponse = restTemplate.postForEntity("http://auth-app-service:8080/task", request, Task.class).getBody();
+            taskResponse.setEmployee(employee);
+            taskServiceImpl.create(taskResponse);
+        }).start();
+        SendMessage new_message = SendMessage
+            .builder()
+            .chatId(chat_id)
+            .text("Successfully added a new task!")
+            .build();
+        return new_message;
     }
     
     public void handleUpdate(Integer task_id, Integer state){
