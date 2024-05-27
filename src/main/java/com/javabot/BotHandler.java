@@ -385,7 +385,8 @@ public class BotHandler {
             SendMessage new_message = SendMessage
                 .builder()
                 .chatId(chat_id)
-                .text("I did not find you on our internal database, are you sure you area already registered?")                        .build();
+                .text("I did not find you on our internal database, are you sure you area already registered?")                        
+                .build();
                 return new_message;
         }
         new Thread(() -> {
@@ -393,7 +394,7 @@ public class BotHandler {
                 RestTemplate restTemplate = new RestTemplate();
                 HttpEntity<String> request = new HttpEntity<String>(message_text);
         
-                Task taskResponse = restTemplate.postForEntity("http://openai-flask-service:8080/task", request, Task.class).getBody();
+                Task taskResponse = restTemplate.postForEntity("http://openai-flask-service:5134/task", request, Task.class).getBody();
                 loggerHandler.info(taskResponse.toString());
                 taskResponse.setEmployee(employee);
                 taskServiceImpl.create(taskResponse);
