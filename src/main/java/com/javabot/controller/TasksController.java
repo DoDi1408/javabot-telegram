@@ -54,7 +54,7 @@ public class TasksController {
     }
 
     @SuppressWarnings({ "null", "unchecked" })
-    @PutMapping (path = "/{taskId}/updateTask")
+    @PutMapping (path = "/updateTask")
     public ResponseEntity<?> updateTask(@RequestHeader(value = "token", required = true) String authToken,@RequestBody Task task ) {
         loggerTasks.info("received an update task");
 
