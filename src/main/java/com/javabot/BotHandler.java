@@ -377,6 +377,7 @@ public class BotHandler {
         return new_message;
     }
 
+    @SuppressWarnings("null")
     public SendMessage addTask(long chat_id, String message_text, Map<Long , String> userStatesMap){
         userStatesMap.remove(chat_id);
         Employee employee = employeeServiceImpl.findByTelegramId(chat_id);

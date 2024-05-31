@@ -5,6 +5,13 @@ public class loginForm {
     private String password;
     private String email;
     
+    
+    public loginForm(String telegramId, String password, String email) {
+        this.telegramId = telegramId;
+        this.password = password;
+        this.email = email;
+    }
+    
     public String getEmail() {
         return email;
     }

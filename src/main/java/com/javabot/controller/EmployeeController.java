@@ -56,7 +56,12 @@ public class EmployeeController {
 
         try {
             Employee employee = employeeServiceImpl.findByTelegramId(Long.valueOf(registrationForm.getTelegramId()).longValue());
-
+            if (employee == null){
+                return ResponseEntity.badRequest().body("You need to be previously registerd on the bot");
+            }
+            if (employee.getPassword() != null){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have already registered before");
+            }
             String email = registrationForm.getEmail();
             String password = registrationForm.getPassword();
 

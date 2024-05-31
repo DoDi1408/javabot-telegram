@@ -64,8 +64,6 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
         if (update.hasMessage() && update.getMessage().hasText()) {
             String message_text = update.getMessage().getText();
 
-            String[] words = message_text.split(" ");
-
             long chat_id = update.getMessage().getChatId();
             loggerBot.info("Recieved message from " + chat_id + ", with text content " + message_text);
 
