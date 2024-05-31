@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: javabot-springboot
-        image: qro.ocir.io/ax6svbbnc2oh/registry-java-bot:latest 
+        image: qro.ocir.io/ax6svbbnc2oh/registry-java-bot
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -27,7 +27,6 @@ spec:
             name: secret-pepper
       imagePullSecrets:  
       - name: ocirsecret  
-
 ---
 apiVersion: v1
 kind: Service

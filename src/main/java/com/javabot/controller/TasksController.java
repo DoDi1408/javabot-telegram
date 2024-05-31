@@ -38,7 +38,7 @@ public class TasksController {
             @SuppressWarnings("unchecked")
             ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
 
-            if (employeeResponse.getStatusCode() != HttpStatus.ACCEPTED){
+            if (employeeResponse.getStatusCode() != HttpStatus.OK){
                 return employeeResponse;
             }
             Employee employee = employeeResponse.getBody();
@@ -66,7 +66,7 @@ public class TasksController {
 
 
         ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
-        if (employeeResponse.getStatusCode() != HttpStatus.ACCEPTED){
+        if (employeeResponse.getStatusCode() != HttpStatus.OK){
             return employeeResponse;
         }
 
@@ -83,7 +83,7 @@ public class TasksController {
             
             task.setEmployee(employeeResponse.getBody());
             taskServiceImpl.update(task);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).header("token", token).build();
+            return ResponseEntity.status(HttpStatus.OK).header("token", token).build();
         } 
         catch (Exception e) {
             loggerTasks.error("server error", e);

@@ -1,5 +1,7 @@
 package com.javabot.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,34 +39,38 @@ public class ManagerController {
   @Autowired
   private AuthService authService;
 
-  // obten team_id de hacer el get anterior
+  @SuppressWarnings({ "unchecked", "null" })
   @GetMapping(path = "/teamTasks")
   public ResponseEntity<?> getTeamTasks(@RequestHeader(value = "token", required = true) String authToken) {
     loggerManager.info("Received getTeamTasks");
     try {
-      @SuppressWarnings("unchecked")
-      ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
-      if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
-        String token = employeeResponse.getHeaders().getFirst("token");
-        try {
-          @SuppressWarnings("null")
-          Manager teamManager = managerServiceImpl.findByEmployeeId(employeeResponse.getBody().getId());
-          Iterable<Task> tasks = taskServiceImpl.allTeamTasks(teamManager.getTeam().getId());
-          for (Task task : tasks) {
-            task.getEmployee().setPassword("hidden");
-          }
-          return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
+    	ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
+
+      	if (employeeResponse.getStatusCode() != HttpStatus.OK){
+        	return employeeResponse;
+      	}
+	
+	String token = employeeResponse.getHeaders().getFirst("token");
+    try {
+        Manager teamManager = managerServiceImpl.findByEmployeeId(employeeResponse.getBody().getId());
+        List<Task> tasks = taskServiceImpl.allTeamTasks(teamManager.getTeam().getId());
+
+		if (tasks.isEmpty()){
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).header("token", token).build();
+		}
+        for (Task task : tasks) {
+        	task.getEmployee().setPassword("hidden");
         }
-        catch (NoResultException nre){
-          loggerManager.error("not a manager", nre);
-          return ResponseEntity.status(HttpStatus.FORBIDDEN).body("not a manager");
-        }
-      }
-      return employeeResponse;
+        return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
+    }
+    catch (NoResultException nre){
+        loggerManager.error("not a manager", nre);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("not a manager");
+    }
     }
     catch (Exception e){
-      loggerManager.error("general error",e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+      	loggerManager.error("general error",e);
+      	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
 

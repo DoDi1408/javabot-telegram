@@ -1,5 +1,7 @@
 package com.javabot.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +67,7 @@ public class EmployeeController {
                 return ResponseEntity.badRequest().body("You need to be previously registerd on the bot");
             }
             if (employee.getPassword() != null){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have already registered before");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You have already registered before");
             }
             String email = registrationForm.getEmail();
             String password = registrationForm.getPassword();
@@ -138,15 +140,20 @@ public class EmployeeController {
         try {
             ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
             
-            if (employeeResponse.getStatusCode() == HttpStatus.ACCEPTED){
-                Iterable<Task> tasks = taskServiceImpl.allEmployeeTasks(employeeResponse.getBody().getId());
-                for (Task task : tasks) {
-                task.getEmployee().setPassword("hidden");
-                }
-                String token = employeeResponse.getHeaders().getFirst("token");
-                return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
+            if (employeeResponse.getStatusCode() != HttpStatus.OK){
+                return employeeResponse;
             }
-            return employeeResponse;
+            String token = employeeResponse.getHeaders().getFirst("token");
+
+            List<Task> tasks = taskServiceImpl.allEmployeeTasks(employeeResponse.getBody().getId());
+
+            if (tasks.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).header("token", token).build();
+            }
+            for (Task task : tasks) {
+                task.getEmployee().setPassword("hidden");
+            }
+            return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
         } 
         catch (Exception e) {
             loggerEmpController.error("general error", e);

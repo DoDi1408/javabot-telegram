@@ -69,7 +69,7 @@ public class EmployeeRegistrationTests {
     public void testMissingData() throws Exception {
         loginForm registrationForm = new loginForm("12345", null, "secret");
         ResponseEntity<?> response = employeeController.completeEmployeeResgistration(registrationForm);
-        // Assertions
+
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Telegram ID, password and email must be provided", response.getBody());
     }
@@ -81,7 +81,6 @@ public class EmployeeRegistrationTests {
 
         ResponseEntity<?> response = employeeController.completeEmployeeResgistration(registrationForm);
 
-        // Assertions
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("telegram id not found", response.getBody());
         verify(employeeService, times(1)).findByTelegramId(telegramId); 
