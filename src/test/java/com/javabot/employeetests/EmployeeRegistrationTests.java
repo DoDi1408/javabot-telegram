@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.javabot.controller.EmployeeController;
 import com.javabot.models.Employee;
+import com.javabot.models.Response;
 import com.javabot.models.loginForm;
 import com.javabot.serviceimp.AuthService;
 import com.javabot.serviceimp.EmployeeServiceImpl;
@@ -35,6 +36,7 @@ public class EmployeeRegistrationTests {
     @MockBean
     private AuthService authService;
 
+    @SuppressWarnings("null")
     @Test
     public void testSuccessfulRegistration() throws Exception {
         Long telegramId = 12345L;
@@ -53,9 +55,11 @@ public class EmployeeRegistrationTests {
         loginForm registrationForm = new loginForm(telegramId.toString(), password, email);
 
         ResponseEntity<?> response = employeeController.completeEmployeeResgistration(registrationForm);
-
+        Response actualResponse = (Response) response.getBody();
+        
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(jwt, response.getBody());
+        assertEquals(Response.class, response.getBody().getClass());
+        assertEquals(actualResponse.getJwt(), jwt);
         verify(employeeService, times(1)).findByTelegramId(telegramId); 
         verify(hashingService, times(1)).generateHashFromPassword(password); 
         verify(authService, times(1)).createJWTfromEmployee(employee); 

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.javabot.controller.EmployeeController;
 import com.javabot.models.Employee;
+import com.javabot.models.Response;
 import com.javabot.models.loginForm;
 import com.javabot.serviceimp.AuthService;
 import com.javabot.serviceimp.EmployeeServiceImpl;
@@ -36,6 +37,7 @@ public class EmployeeLoginTests {
     @MockBean
     private AuthService authService;
     
+    @SuppressWarnings("null")
     @Test
     public void testSuccessfulLogin() throws Exception {
         String email = "test@example.com";
@@ -54,9 +56,11 @@ public class EmployeeLoginTests {
         loginForm loginForm = new loginForm(null, password, email);
 
         ResponseEntity<?> response = employeeController.employeeLogin(loginForm);
+        Response actualResponse = (Response) response.getBody();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(jwt, response.getBody());
+        assertEquals(Response.class, response.getBody().getClass());
+        assertEquals(actualResponse.getJwt(), jwt);
         verify(employeeService, times(1)).findByEmail(email); 
         verify(hashingService, times(1)).verifyHash(hashedPassword,password); 
         verify(authService, times(1)).createJWTfromEmployee(employee); 
