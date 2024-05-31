@@ -1,28 +1,27 @@
 package com.javabot.models;
 
-import com.javabot.service.EmployeeService;
 import com.javabot.service.ManagerService;
+
+import jakarta.persistence.NoResultException;
 
 public class Response {
     private String jwt;
-    private String email;
     private String employeeType;
 
-    public Response(String jwt, String email, EmployeeService employeeService, ManagerService managerService) {
+    public Response(String jwt, Integer employeeId, ManagerService managerService) {
         this.jwt = jwt;
-        this.email = email;
-        this.employeeType = determineEmployeeType(email, employeeService, managerService);
+        this.employeeType = determineEmployeeType(employeeId, managerService);
     }
 
-    private String determineEmployeeType(String email, EmployeeService employeeService, ManagerService managerService) {
-        Employee employee = employeeService.findByEmail(email);
-        
-        if (employee == null) {
-            return "No existe";
+    @SuppressWarnings("unused")
+    private String determineEmployeeType(Integer employeeId, ManagerService managerService) {
+        try {
+            Manager manager = managerService.findByEmployeeId(employeeId);
+            return "manager";
         }
-
-        Manager manager = managerService.findByEmployeeId(employee.getId());
-        return (manager != null) ? "Manager" : "Employee";
+        catch (NoResultException nre){
+            return "employee";
+        }
     }
 
     public String getJwt() {
@@ -31,14 +30,6 @@ public class Response {
 
     public void setJwt(String jwt) {
         this.jwt = jwt;
-    }
-
-    public String getEmailToCheckTypeEmployee() {
-        return email;
-    }
-
-    public void setEmailToCheckTypeEmployee(String email) {
-        this.email = email;
     }
 
     public String getEmployeeType() {

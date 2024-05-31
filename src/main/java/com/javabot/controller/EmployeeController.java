@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 import com.javabot.models.Employee;
+import com.javabot.models.Response;
 import com.javabot.models.Task;
 import com.javabot.models.loginForm;
 import com.javabot.serviceimp.AuthService;
 import com.javabot.serviceimp.EmployeeServiceImpl;
 import com.javabot.serviceimp.HashingService;
+import com.javabot.serviceimp.ManagerServiceImpl;
 import com.javabot.serviceimp.TaskServiceImpl;
 
 import jakarta.persistence.NoResultException;
@@ -40,6 +42,9 @@ public class EmployeeController {
     
     @Autowired
     private HashingService hashingService;
+
+    @Autowired
+    private ManagerServiceImpl managerServiceImpl;
 
     private final static Logger loggerEmpController = LoggerFactory.getLogger(EmployeeController.class);
 
@@ -77,7 +82,8 @@ public class EmployeeController {
             employee.setPassword("hidden");
 
             String jwt = authService.createJWTfromEmployee(employee);
-            return ResponseEntity.status(HttpStatus.CREATED).body(jwt);
+            Response responseBody = new Response(jwt, employee.getId(), managerServiceImpl);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
 
         }
         catch (NoResultException nre){
@@ -109,7 +115,8 @@ public class EmployeeController {
                 loggerEmpController.info("password hash verified");
                 employee.setPassword("hidden");
                 String jwt = authService.createJWTfromEmployee(employee);
-                return ResponseEntity.ok().body(jwt);
+                Response responseBody = new Response(jwt, employee.getId(), managerServiceImpl);
+                return ResponseEntity.ok().body(responseBody);
             }
             loggerEmpController.error("error hashing, possibly incorrect password");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Incorrect Password");
