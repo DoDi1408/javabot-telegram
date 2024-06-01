@@ -77,6 +77,7 @@ public class TaskServiceImpl implements TaskService {
     }  
 
     @Override
+    @Transactional
     public void deleteAllEmployeeTasks(Integer id) {
         String sqlQuery = "DELETE FROM Task t WHERE t.employee.id =:employeeId";
         
