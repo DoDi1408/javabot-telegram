@@ -80,8 +80,7 @@ public class TaskServiceImpl implements TaskService {
     public void deleteAllEmployeeTasks(Integer id) {
         String sqlQuery = "DELETE FROM Task t WHERE t.employee.id =:employeeId";
         
-        Query theQuery = entityManager.createQuery(sqlQuery,Task.class);
-        theQuery.setParameter("employeeId", id);
+        Query theQuery = entityManager.createQuery(sqlQuery).setParameter("employeeId", id);
         theQuery.executeUpdate();
     }
 }
