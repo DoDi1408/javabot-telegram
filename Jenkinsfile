@@ -27,7 +27,7 @@ pipeline {
         stage('Build docker image'){
             steps{
                 script{
-                    sh "docker build -t javabot-image:${BUILD_NUMBER}-${GIT_COMMIT} ."
+                    sh "docker build -t javabot-image:latest ."
                 }
             }
         }
@@ -35,8 +35,8 @@ pipeline {
             steps{
                 script{
                     sh 'echo ${OCI_CREDENTIALS_PSW} | docker login --username ${OCI_CREDENTIALS_USR} --password-stdin qro.ocir.io'
-                    sh "docker tag javabot-image:${BUILD_NUMBER}-${GIT_COMMIT} qro.ocir.io/ax6svbbnc2oh/registry-java-bot:${BUILD_NUMBER}-${GIT_COMMIT}"
-                    sh "docker push qro.ocir.io/ax6svbbnc2oh/registry-java-bot:${BUILD_NUMBER}-${GIT_COMMIT}"
+                    sh "docker tag javabot-image:latest qro.ocir.io/ax6svbbnc2oh/registry-java-bot:latest"
+                    sh "docker push qro.ocir.io/ax6svbbnc2oh/registry-java-bot:latest"
                 }
             }
         }

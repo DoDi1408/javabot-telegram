@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: javabot-springboot
-        image: qro.ocir.io/ax6svbbnc2oh/registry-java-bot
+        image: qro.ocir.io/ax6svbbnc2oh/registry-java-bot:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
