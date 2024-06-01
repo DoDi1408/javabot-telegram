@@ -172,6 +172,30 @@ public class EmployeeControllerTests {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
+    public void testGetTasksByEmployee_Content() throws Exception {
+        String token = "eyJhbGciOiJIUzI1NiJ9..."; 
+        Integer employeeId = 1;
+        List<Task> tasks = new ArrayList<>(); 
+        tasks.add(new Task());
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        
+        tasks.get(0).setEmployee(employee);
+        ResponseEntity<?> entity = new ResponseEntity<>(employee, HttpStatus.OK);
+
+        Mockito.when(authService.getEmployeeFromJWT(token)).thenReturn((ResponseEntity) entity);
+
+        Mockito.when(taskService.allEmployeeTasks(employeeId)).thenReturn(tasks);
+
+        ResponseEntity<?> response = employeeController.getTasksByEmployee(token);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(authService, times(1)).getEmployeeFromJWT(token);
+        verify(taskService, times(1)).allEmployeeTasks(employeeId);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
     public void testGetTasksByEmployee_NoContent() throws Exception {
         String token = "eyJhbGciOiJIUzI1NiJ9..."; 
         Integer employeeId = 1;
