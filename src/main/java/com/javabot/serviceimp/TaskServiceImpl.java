@@ -8,6 +8,7 @@ import com.javabot.models.Task;
 import com.javabot.service.TaskService;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
@@ -77,9 +78,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteAllEmployeeTasks(Integer id) {
-        String sqlQuery = "DELETE t FROM Task t WHERE t.employee.id =:employeeId";
+        String sqlQuery = "DELETE FROM Task t WHERE t.employee.id =:employeeId";
         
-        TypedQuery<Task> theQuery = entityManager.createQuery(sqlQuery,Task.class);
+        Query theQuery = entityManager.createQuery(sqlQuery,Task.class);
         theQuery.setParameter("employeeId", id);
+        theQuery.executeUpdate();
     }
 }
