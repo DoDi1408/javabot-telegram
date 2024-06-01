@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -154,6 +155,25 @@ public class EmployeeController {
                 task.getEmployee().setPassword("hidden");
             }
             return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
+        } 
+        catch (Exception e) {
+            loggerEmpController.error("general error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "null" })
+    @DeleteMapping (path = "/deleteUser")
+    public ResponseEntity<?> deleteUserEntity(@RequestHeader(value = "token", required = true) String authToken) {
+        try {
+            ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
+            
+            if (employeeResponse.getStatusCode() != HttpStatus.OK){
+                return employeeResponse;
+            }
+
+            employeeServiceImpl.delete(employeeResponse.getBody().getId());
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } 
         catch (Exception e) {
             loggerEmpController.error("general error", e);

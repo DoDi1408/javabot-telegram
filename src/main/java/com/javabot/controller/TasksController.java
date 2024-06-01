@@ -117,7 +117,27 @@ public class TasksController {
             }
             String token = employeeResponse.getHeaders().getFirst("token");
             taskServiceImpl.delete(task_id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).header("token", token).body("deleted");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).header("token", token).build();
+        } 
+        catch (Exception e) {
+            loggerTasks.error("server error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failure");
+        }
+    }
+    
+    @SuppressWarnings({ "unchecked", "null" })
+    @DeleteMapping (path = "/deleteAllTasks")
+    public ResponseEntity<?> deleteAllTasks(@RequestHeader(value = "token", required = true) String authToken){
+        loggerTasks.info("received a delete task");
+        
+        ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
+        if (employeeResponse.getStatusCode() != HttpStatus.OK){
+            return employeeResponse;
+        }
+        try {
+            taskServiceImpl.deleteAllEmployeeTasks(employeeResponse.getBody().getId());
+            String token = employeeResponse.getHeaders().getFirst("token");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).header("token", token).build();
         } 
         catch (Exception e) {
             loggerTasks.error("server error", e);

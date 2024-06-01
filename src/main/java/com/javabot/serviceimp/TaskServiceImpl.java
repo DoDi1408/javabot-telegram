@@ -50,8 +50,10 @@ public class TaskServiceImpl implements TaskService {
         TypedQuery<Task> theQuery = entityManager.createQuery(sqlQuery,Task.class);
         theQuery.setParameter("employeeId", id);
         return theQuery.getResultList();
-
     }
+
+
+
     @Override
     public List<Task> allTeamTasks(Integer teamId) {
         String sqlQuery = "SELECT t FROM Task t " +
@@ -72,4 +74,12 @@ public class TaskServiceImpl implements TaskService {
         theQuery.setParameter("taskState", state);
         return theQuery.getResultList();
     }  
+
+    @Override
+    public void deleteAllEmployeeTasks(Integer id) {
+        String sqlQuery = "DELETE t FROM Task t WHERE t.employee.id =:employeeId";
+        
+        TypedQuery<Task> theQuery = entityManager.createQuery(sqlQuery,Task.class);
+        theQuery.setParameter("employeeId", id);
+    }
 }
