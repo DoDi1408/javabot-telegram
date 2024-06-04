@@ -269,13 +269,13 @@ public class BotHandler {
 
                 for (Task task : teamTasks) {
                     if (task.getStateTask().equals(0)){
-                    toDoTask = toDoTask + "- " + task.getTitle()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        toDoTask = toDoTask + "- " + task.getTitle()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                     }
                     else if (task.getStateTask().equals(1)){
-                        inProgressTask = inProgressTask + "- " + task.getDescription()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        inProgressTask = inProgressTask + "- " + task.getTitle()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                     }
                     else if (task.getStateTask().equals(2)){
-                        completedTask = completedTask + "- " + task.getDescription()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        completedTask = completedTask + "- " + task.getTitle()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
                     }
                 }
 
