@@ -17,17 +17,19 @@ import org.springframework.http.ResponseEntity;
 
 import com.javabot.controller.EmployeeController;
 import com.javabot.models.Employee;
+import com.javabot.models.Manager;
 import com.javabot.models.Response;
 import com.javabot.models.Task;
 import com.javabot.models.loginForm;
 import com.javabot.serviceimp.AuthService;
 import com.javabot.serviceimp.EmployeeServiceImpl;
 import com.javabot.serviceimp.HashingService;
+import com.javabot.serviceimp.ManagerServiceImpl;
 import com.javabot.serviceimp.TaskServiceImpl;
 
 import jakarta.persistence.NoResultException;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.main.lazy-initialization=true",classes = {EmployeeController.class})
 public class EmployeeControllerTests {
     
 
@@ -46,10 +48,12 @@ public class EmployeeControllerTests {
     @MockBean
     private TaskServiceImpl taskService;
 
+    @MockBean 
+    ManagerServiceImpl managerServiceImpl;
     
     @SuppressWarnings("null")
     @Test
-    public void testSuccessfulLogin() throws Exception {
+    public void testSuccessfulLoginManager() throws Exception {
         String email = "test@example.com";
         String password = "secret";
         String hashedPassword = "hashedPassword";
@@ -58,11 +62,13 @@ public class EmployeeControllerTests {
         Employee employee = new Employee();
         employee.setEmail(email);
         employee.setPassword(hashedPassword);
+        employee.setId(1);
 
         Mockito.when(employeeService.findByEmail(email)).thenReturn(employee);
         Mockito.when(hashingService.verifyHash(hashedPassword,password)).thenReturn(true);
         Mockito.when(authService.createJWTfromEmployee(employee)).thenReturn(jwt);
 
+        Mockito.when(managerServiceImpl.findByEmployeeId(1)).thenReturn(new Manager());
         loginForm loginForm = new loginForm(null, password, email);
 
         ResponseEntity<?> response = employeeController.employeeLogin(loginForm);
@@ -70,11 +76,48 @@ public class EmployeeControllerTests {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(Response.class, response.getBody().getClass());
+        assertEquals(actualResponse.getEmployeeType(), "manager");
         assertEquals(actualResponse.getJwt(), jwt);
         verify(employeeService, times(1)).findByEmail(email); 
         verify(hashingService, times(1)).verifyHash(hashedPassword,password); 
         verify(authService, times(1)).createJWTfromEmployee(employee); 
+        verify(managerServiceImpl, times(1)).findByEmployeeId(1);
     }
+
+    @SuppressWarnings("null")
+    @Test
+    public void testSuccessfulLoginEmployee() throws Exception {
+        String email = "test@example.com";
+        String password = "secret";
+        String hashedPassword = "hashedPassword";
+        String jwt = "eyJhbGciOiJIUzI1NiJ9...";
+
+        Employee employee = new Employee();
+        employee.setEmail(email);
+        employee.setPassword(hashedPassword);
+        employee.setId(1);
+
+        Mockito.when(employeeService.findByEmail(email)).thenReturn(employee);
+        Mockito.when(hashingService.verifyHash(hashedPassword,password)).thenReturn(true);
+        Mockito.when(authService.createJWTfromEmployee(employee)).thenReturn(jwt);
+
+        NoResultException nre = new NoResultException();
+        Mockito.when(managerServiceImpl.findByEmployeeId(1)).thenThrow(nre);
+        loginForm loginForm = new loginForm(null, password, email);
+
+        ResponseEntity<?> response = employeeController.employeeLogin(loginForm);
+        Response actualResponse = (Response) response.getBody();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(Response.class, response.getBody().getClass());
+        assertEquals(actualResponse.getEmployeeType(), "employee");
+        assertEquals(actualResponse.getJwt(), jwt);
+        verify(employeeService, times(1)).findByEmail(email); 
+        verify(hashingService, times(1)).verifyHash(hashedPassword,password); 
+        verify(authService, times(1)).createJWTfromEmployee(employee); 
+        verify(managerServiceImpl, times(1)).findByEmployeeId(1);
+    }
+
     @Test
     public void testErroneousPasswordLogin() throws Exception {
         String email = "test@example.com";
@@ -123,7 +166,7 @@ public class EmployeeControllerTests {
 
     @SuppressWarnings("null")
     @Test
-    public void testSuccessfulRegistration() throws Exception {
+    public void testSuccessfulRegistrationManager() throws Exception {
         Long telegramId = 12345L;
         String email = "test@example.com";
         String password = "secret";
@@ -132,10 +175,12 @@ public class EmployeeControllerTests {
 
         Employee employee = new Employee();
         employee.setTelegramId(telegramId);
+        employee.setId(1);
 
         Mockito.when(employeeService.findByTelegramId(telegramId)).thenReturn(employee);
         Mockito.when(hashingService.generateHashFromPassword(password)).thenReturn(hashedPassword);
         Mockito.when(authService.createJWTfromEmployee(employee)).thenReturn(jwt);
+        Mockito.when(managerServiceImpl.findByEmployeeId(1)).thenReturn(new Manager());
 
         loginForm registrationForm = new loginForm(telegramId.toString(), password, email);
 
@@ -145,10 +190,48 @@ public class EmployeeControllerTests {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(Response.class, response.getBody().getClass());
         assertEquals(actualResponse.getJwt(), jwt);
+        assertEquals(actualResponse.getEmployeeType(), "manager");
         verify(employeeService, times(1)).findByTelegramId(telegramId); 
         verify(hashingService, times(1)).generateHashFromPassword(password); 
         verify(authService, times(1)).createJWTfromEmployee(employee); 
+        verify(managerServiceImpl, times(1)).findByEmployeeId(1); 
     }
+
+    @SuppressWarnings("null")
+    @Test
+    public void testSuccessfulRegistrationEmployee() throws Exception {
+        Long telegramId = 12345L;
+        String email = "test@example.com";
+        String password = "secret";
+        String hashedPassword = "hashedPassword";
+        String jwt = "eyJhbGciOiJIUzI1NiJ9...";
+
+        Employee employee = new Employee();
+        employee.setTelegramId(telegramId);
+        employee.setId(1);
+
+        Mockito.when(employeeService.findByTelegramId(telegramId)).thenReturn(employee);
+        Mockito.when(hashingService.generateHashFromPassword(password)).thenReturn(hashedPassword);
+        Mockito.when(authService.createJWTfromEmployee(employee)).thenReturn(jwt);
+
+        NoResultException nre = new NoResultException();
+        Mockito.when(managerServiceImpl.findByEmployeeId(1)).thenThrow(nre);
+
+        loginForm registrationForm = new loginForm(telegramId.toString(), password, email);
+
+        ResponseEntity<?> response = employeeController.completeEmployeeResgistration(registrationForm);
+        Response actualResponse = (Response) response.getBody();
+        
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(Response.class, response.getBody().getClass());
+        assertEquals(actualResponse.getJwt(), jwt);
+        assertEquals(actualResponse.getEmployeeType(), "employee");
+        verify(employeeService, times(1)).findByTelegramId(telegramId); 
+        verify(hashingService, times(1)).generateHashFromPassword(password); 
+        verify(authService, times(1)).createJWTfromEmployee(employee); 
+        verify(managerServiceImpl, times(1)).findByEmployeeId(1); 
+    }
+
     @Test
     public void testMissingDataRegister() throws Exception {
         loginForm registrationForm = new loginForm("12345", null, "secret");
@@ -230,4 +313,7 @@ public class EmployeeControllerTests {
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         verify(authService, times(1)).getEmployeeFromJWT(invalidToken);
     }
+    
+
+    
 }
