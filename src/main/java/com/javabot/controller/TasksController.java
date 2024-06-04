@@ -35,6 +35,7 @@ public class TasksController {
 
     private final static Logger loggerTasks = LoggerFactory.getLogger(TasksController.class);
 
+    @SuppressWarnings("unchecked")
     @PostMapping (path = "/createTask")
     public ResponseEntity<?> createTask(@RequestHeader(value = "token", required = true) String authToken, @RequestBody Task task) {
         loggerTasks.info("received a create task");
@@ -46,7 +47,6 @@ public class TasksController {
         task.setStateTask(0);
         task.setStartDate(new Date());
         try {
-            @SuppressWarnings("unchecked")
             ResponseEntity<Employee> employeeResponse = (ResponseEntity<Employee>) authService.getEmployeeFromJWT(authToken);
 
             if (employeeResponse.getStatusCode() != HttpStatus.OK){

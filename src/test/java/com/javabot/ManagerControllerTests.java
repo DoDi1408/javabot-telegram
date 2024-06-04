@@ -1,4 +1,4 @@
-package com.javabot.employeetests;
+package com.javabot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
@@ -39,7 +39,6 @@ public class ManagerControllerTests {
 
     @MockBean
     private EmployeeServiceImpl employeeService;
-
 
     @MockBean
     private TaskServiceImpl taskService;

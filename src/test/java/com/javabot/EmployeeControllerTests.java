@@ -1,4 +1,4 @@
-package com.javabot.employeetests;
+package com.javabot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
