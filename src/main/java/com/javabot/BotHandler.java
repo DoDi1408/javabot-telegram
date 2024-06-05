@@ -268,14 +268,17 @@ public class BotHandler {
                 String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
 
                 for (Task task : teamTasks) {
+
+                    String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
+
                     if (task.getStateTask().equals(0)){
-                        toDoTask = toDoTask + "- " + task.getTitle()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        toDoTask = toDoTask + "- " + task.getTitle()+ " | " + dueDate + "\n";
                     }
                     else if (task.getStateTask().equals(1)){
-                        inProgressTask = inProgressTask + "- " + task.getTitle()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        inProgressTask = inProgressTask + "- " + task.getTitle()+ " | " + dueDate + "\n";
                     }
                     else if (task.getStateTask().equals(2)){
-                        completedTask = completedTask + "- " + task.getTitle()+ " | " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        completedTask = completedTask + "- " + task.getTitle()+ " | " + dueDate + "\n";
                     }
                 }
 
@@ -332,12 +335,14 @@ public class BotHandler {
             String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
     
             for (Task task : toDoList) {
+                String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
+
                 if (task.getStateTask().equals(0)){
-                    toDoTask = toDoTask + "- " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    toDoTask = toDoTask + "- " + task.getTitle() + " | Due: " + dueDate+ "\n";
                 } else if (task.getStateTask().equals(1)){
-                    inProgressTask = inProgressTask + "- " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    inProgressTask = inProgressTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
                 } else if (task.getStateTask().equals(2)){
-                    completedTask = completedTask + "- " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                    completedTask = completedTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
                 }
             }
             List<InlineKeyboardRow> rows = new ArrayList<>();
@@ -475,12 +480,14 @@ public class BotHandler {
         rows.add(rowLargeButton);
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
-        
+
+        String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
+        String startDate = task.getDueDate() != null ? task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No start date";
         String text =  "<b>" + "Title: " + task.getTitle() + "</b>" + "\n" + 
         "Description: "+ task.getDescription()+ "\n" + 
         "Status: " + status + "\n" + 
-        "Start Date: "  + task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n" +  
-        "Due Date: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+        "Start Date: "  + startDate + "\n" +  
+        "Due Date: " + dueDate + "\n";
         
         
 
@@ -516,7 +523,8 @@ public class BotHandler {
             Integer counter = 0; 
             String tasks = toDoTaskTitle;
             for (Task task : listByState) {
-                    tasks = tasks + "[ " + ++counter + " ] " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";  
+                String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
+                tasks = tasks + "[ " + ++counter + " ] " + task.getTitle() + " | Due: " + dueDate + "\n";  
             }
             
             Integer numRows = totalTasks / 4 + (totalTasks % 4 == 0 ? 0 : 1); // 6 tasks = 2 rows
@@ -595,12 +603,14 @@ public class BotHandler {
                 String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
         
                 for (Task task : toDoList) {
+                    String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
+
                     if (task.getStateTask().equals(0)){
-                        toDoTask = toDoTask + "- " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        toDoTask = toDoTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
                     } else if (task.getStateTask().equals(1)){
-                        inProgressTask = inProgressTask + "- " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        inProgressTask = inProgressTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
                     } else if (task.getStateTask().equals(2)){
-                        completedTask = completedTask + "- " + task.getTitle() + " | Due: " + task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() + "\n";
+                        completedTask = completedTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
                     }
                 }
         
