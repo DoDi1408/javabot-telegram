@@ -92,10 +92,14 @@ public class TaskServiceImpl implements TaskService {
             task.setDescription("This task has no description");
         }
         if (task.getDueDate() == null){
-            task.setDueDate(new Date());
+            long millisecondsInYear = 1000L * 60 * 60 * 24 * 365;
+            Date dueDate = new Date(task.getDueDate().getTime() + (millisecondsInYear * 100));
+            task.setDueDate(dueDate);
         }
         if (task.getStartDate() == null){
-            task.setStartDate(new Date());
+            long millisecondsInYear = 1000L * 60 * 60 * 24 * 365;
+            Date startDate = new Date(task.getDueDate().getTime() - (millisecondsInYear * 100));
+            task.setStartDate(startDate);
         }
         if (task.getTitle() == null){
             task.setTitle("This task has no title");
