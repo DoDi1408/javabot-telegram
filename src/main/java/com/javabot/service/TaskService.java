@@ -14,4 +14,6 @@ public interface TaskService extends CommonService<Task> {
     List<Task> toDoStateTasks(Integer id, Integer state);
 
     void deleteAllEmployeeTasks(Integer id);
+
+    Task cleanUpForFront(Task task);
 }

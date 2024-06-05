@@ -171,7 +171,7 @@ public class EmployeeController {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).header("token", token).build();
             }
             for (Task task : tasks) {
-                task.getEmployee().setPassword("hidden");
+                task = taskServiceImpl.cleanUpForFront(task);
             }
             return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
         } 

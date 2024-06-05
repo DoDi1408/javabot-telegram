@@ -1,5 +1,6 @@
 package com.javabot.serviceimp;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -83,5 +84,23 @@ public class TaskServiceImpl implements TaskService {
         
         Query theQuery = entityManager.createQuery(sqlQuery).setParameter("employeeId", id);
         theQuery.executeUpdate();
+    }
+
+    @Override
+    public Task cleanUpForFront(Task task){
+        if (task.getDescription() == null){
+            task.setDescription("This task has no description");
+        }
+        if (task.getDueDate() == null){
+            task.setDueDate(new Date());
+        }
+        if (task.getStartDate() == null){
+            task.setStartDate(new Date());
+        }
+        if (task.getTitle() == null){
+            task.setTitle("This task has no title");
+        }
+        task.getEmployee().setPassword("hidden");
+        return task;
     }
 }
