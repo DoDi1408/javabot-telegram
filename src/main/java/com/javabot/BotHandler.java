@@ -487,7 +487,7 @@ public class BotHandler {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
 
         String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
-        String startDate = task.getDueDate() != null ? task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No start date";
+        String startDate = task.getStartDate() != null ? task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No start date";
         String text =  "<b>" + task.getTitle() + "</b>" + "\n\n" + 
         "<b>" + "Description: " + "</b>" + "\n" + "<blockquote>" + task.getDescription() + "</blockquote>" +"\n\n" + 
         "<b>" + "Status: " + "</b>" + "\n" + status + "\n\n" + 
