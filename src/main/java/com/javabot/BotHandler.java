@@ -56,11 +56,15 @@ public class BotHandler {
     }
 
     public SendMessage handleStart(long chat_id){
-        String startMessage = "Hello! I am a To-Do Bot, I'll be glad to be of use to you!";
+        String startMessage = "Welcome to the" + "<b>" + "Oracle Task Manager Bot!" + "</b>" + "I'm here to help you stay organized and efficient at Oracle. If you're new to the bot, please register using the command:"
+        + "\n\n" + "/register - Register to use the bot (register as an employee or manager)" + "\n\n" + "<b>" + "Team Management" + "</b>" + "\n" + "/jointeam - List available teams to join or change" 
+        + "\n\n" + "<b>" + "Task Management" + "</b>" + "\n" + "/todolist - List all tasks (To-Do, In Progress, Completed)" + "\n" +"/teamlist - (Managers only) List all your team's tasks" + "\n" + "/addtask - Add a new task to your list (provide a description; fields are filled using the OpenAI API)"
+        + "\n\n" + "Remember, everything else can be managed using the inline buttons. Let's streamline your workflow and boost productivity together!";
         SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
                     .text(startMessage)
+                    .parseMode("HTML")
                     .build();
         return new_message;
     }
@@ -184,12 +188,13 @@ public class BotHandler {
                 row.add(button);
                 rows.add(row);
             }
-            textMessage = textMessage + "To join a team simply touch one of the teams!";
+            textMessage = textMessage + "\nTo join a team simply touch one of the teams!";
             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
             SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text("These are the available teams: \n" + textMessage)
+                    .text("<b>" + "These are the available teams:" + "</b>" + "\n" + textMessage)
+                    .parseMode("HTML")
                     .replyMarkup(inlineKeyboardMarkup)
                     .build();
             return new_message;
@@ -263,9 +268,9 @@ public class BotHandler {
                 List<Employee> allEmployees = teamServiceImpl.teamEmployees(teamID);
                 List <Task> teamTasks = taskServiceImpl.allTeamTasks(teamID);
 
-                String toDoTask = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
-                String inProgressTask = EmojiParser.parseToUnicode("InProgress tasks: :hourglass: \n");
-                String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
+                String toDoTask = EmojiParser.parseToUnicode("\nToDo tasks: :memo: \n");
+                String inProgressTask = EmojiParser.parseToUnicode("\nInProgress tasks: :hourglass: \n");
+                String completedTask = EmojiParser.parseToUnicode("\nCompleted tasks: :white_check_mark: \n");
 
                 for (Task task : teamTasks) {
 
@@ -373,7 +378,7 @@ public class BotHandler {
     
     public SendMessage handleAddTask(long chat_id, Map<Long , String> userStatesMap){
         userStatesMap.put(chat_id, "ADDING_TASK");
-        String addItem = "To add a task simply send me a task description, a title, and a due date and start date";
+        String addItem = "To add a task, simply send me a description that includes a title, a due date, and a start date. You can write the task in any format you like, and our AI will automatically fill in the necessary fields based on your input.";
         SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
@@ -412,7 +417,7 @@ public class BotHandler {
         SendMessage new_message = SendMessage
             .builder()
             .chatId(chat_id)
-            .text("Adding task... this might take a couple seconds.")
+            .text("Adding your task... \nThis might take a few seconds. Please wait a moment before checking your to-do list to ensure your task is fully processed and displayed. \n\nThank you for your patience!")
             .build();
         return new_message;
     }
@@ -483,13 +488,11 @@ public class BotHandler {
 
         String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
         String startDate = task.getDueDate() != null ? task.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No start date";
-        String text =  "<b>" + "Title: " + task.getTitle() + "</b>" + "\n" + 
-        "Description: "+ task.getDescription()+ "\n" + 
-        "Status: " + status + "\n" + 
-        "Start Date: "  + startDate + "\n" +  
-        "Due Date: " + dueDate + "\n";
-        
-        
+        String text =  "<b>" + task.getTitle() + "</b>" + "\n\n" + 
+        "<b>" + "Description: " + "</b>" + "\n" + task.getDescription()+ "\n\n" + 
+        "<b>" + "Status: " + "</b>" + "\n" + status + "\n\n" + 
+        "<b>" + "Start Date: " + "</b>" + startDate + "\n" +  
+        "<b>" + "Due Date: " + "</b>"+ dueDate + "\n";    
 
         EditMessageText new_message = EditMessageText
             .builder()
@@ -598,9 +601,9 @@ public class BotHandler {
             List<Task> toDoList = taskServiceImpl.allEmployeeTasks(modifyEmployee.getId());
             
             if(toDoList.size() != 0){
-                String toDoTask = EmojiParser.parseToUnicode("ToDo tasks: :memo: \n");
-                String inProgressTask = EmojiParser.parseToUnicode("InProgress tasks: :hourglass: \n");
-                String completedTask = EmojiParser.parseToUnicode("Completed tasks: :white_check_mark: \n");
+                String toDoTask = EmojiParser.parseToUnicode("\nToDo tasks: :memo: \n");
+                String inProgressTask = EmojiParser.parseToUnicode("\nInProgress tasks: :hourglass: \n");
+                String completedTask = EmojiParser.parseToUnicode("\nCompleted tasks: :white_check_mark: \n");
         
                 for (Task task : toDoList) {
                     String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
