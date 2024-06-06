@@ -664,13 +664,22 @@ public class BotHandler {
                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
 
 
-                return EditMessageText
+                if (messageId == null) {
+                    return SendMessage
                             .builder()
                             .chatId(chat_id)
-                            .messageId(messageId)
                             .text("Your task list is empty!")
                             .replyMarkup(inlineKeyboardMarkup)
-                            .build();
+                            .build(); 
+                } else {
+                    return EditMessageText
+                                .builder()
+                                .chatId(chat_id)
+                                .messageId(messageId)
+                                .text("Your task list is empty!")
+                                .replyMarkup(inlineKeyboardMarkup)
+                                .build();    
+                }
             }
             
         } catch (EntityNotFoundException e) {
