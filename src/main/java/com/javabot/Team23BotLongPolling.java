@@ -141,6 +141,11 @@ public class Team23BotLongPolling  implements SpringLongPollingBot, LongPollingS
                 executeTelegramAction(message, edited_message);
             }
 
+            else if (callback_data.equals(BotCommands.ADD_TASK_COMMAND.getCommand())){
+                SendMessage message = handler.handleAddTask(chat_id, userStatesMap);
+                executeTelegramAction(message, null);
+            }
+
             else if (callback_data.equals(BotCommands.REGISTER_MAN_COMMAND.getCommand())){
                 SendMessage message = handler.handleRegistrationManager(chat_id, userStatesMap);
                 EditMessageText edited_message = EditMessageText
