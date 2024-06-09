@@ -634,96 +634,120 @@ public class BotHandler {
         try {
             Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chat_id);
             List<Task> toDoList = taskServiceImpl.allEmployeeTasks(modifyEmployee.getId());
+            try {
+                Manager man = managerServiceImpl.findByEmployeeId(modifyEmployee.getId());
+                loggerHandler.info(man.toString());
+                loggerHandler.info("MANAGER DETECTED, THOU CANT CHANGE TEAM");
+                SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("You are a manager! Managers don't have a To-Do list. However, you can view your team's tasks -> /teamlist.")
+                    .build();
+                return new_message;
+            }
+            catch (NoResultException e){
+                if(toDoList.size() != 0){
+                    String toDoTask = EmojiParser.parseToUnicode("\nToDo tasks: :memo: \n");
+                    String inProgressTask = EmojiParser.parseToUnicode("\nInProgress tasks: :hourglass: \n");
+                    String completedTask = EmojiParser.parseToUnicode("\nCompleted tasks: :white_check_mark: \n");
             
-            if(toDoList.size() != 0){
-                String toDoTask = EmojiParser.parseToUnicode("\nToDo tasks: :memo: \n");
-                String inProgressTask = EmojiParser.parseToUnicode("\nInProgress tasks: :hourglass: \n");
-                String completedTask = EmojiParser.parseToUnicode("\nCompleted tasks: :white_check_mark: \n");
-        
-                for (Task task : toDoList) {
-                    String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
-                    loggerHandler.info(task.getDueDate().toString());
-
-                    if (task.getStateTask().equals(0)){
-                        toDoTask = toDoTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
-                    } else if (task.getStateTask().equals(1)){
-                        inProgressTask = inProgressTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
-                    } else if (task.getStateTask().equals(2)){
-                        completedTask = completedTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
+                    for (Task task : toDoList) {
+                        String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
+                        loggerHandler.info(task.getDueDate().toString());
+    
+                        if (task.getStateTask().equals(0)){
+                            toDoTask = toDoTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
+                        } else if (task.getStateTask().equals(1)){
+                            inProgressTask = inProgressTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
+                        } else if (task.getStateTask().equals(2)){
+                            completedTask = completedTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
+                        }
                     }
-                }
-        
-                List<InlineKeyboardRow> rows = new ArrayList<>();
-        
-                InlineKeyboardRow row = new InlineKeyboardRow();
-                InlineKeyboardRow row2 = new InlineKeyboardRow();
-        
-                InlineKeyboardButton buttonToDoTask = new InlineKeyboardButton(EmojiParser.parseToUnicode(":memo: ToDo Tasks"));
-                InlineKeyboardButton buttonInProgress = new InlineKeyboardButton(EmojiParser.parseToUnicode(":hourglass: InProgress"));
-                InlineKeyboardButton buttonCompleted = new InlineKeyboardButton(EmojiParser.parseToUnicode(":white_check_mark: Completed"));
-                buttonToDoTask.setCallbackData("GET_STATE_TASKS 0");
-                buttonInProgress.setCallbackData("GET_STATE_TASKS 1");
-                buttonCompleted.setCallbackData("GET_STATE_TASKS 2");
-        
-                row.add(buttonToDoTask);
-                row2.add(buttonInProgress);
-                row2.add(buttonCompleted);
-        
-                rows.add(row);
-                rows.add(row2);
-        
-                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
-        
-                if (messageId == null) {
-                    return SendMessage
-                            .builder()
-                            .chatId(chat_id)
-                            .text(toDoTask + inProgressTask + completedTask)
-                            .replyMarkup(inlineKeyboardMarkup)
-                            .build();
-                } else { 
-                    return EditMessageText
-                            .builder()
-                            .chatId(chat_id)
-                            .messageId(messageId)
-                            .text(toDoTask + inProgressTask + completedTask)
-                            .replyMarkup(inlineKeyboardMarkup)
-                            .build();
-                }
-            } else {
-                List<InlineKeyboardRow> rows = new ArrayList<>();
-                InlineKeyboardRow row = new InlineKeyboardRow();
-                InlineKeyboardButton buttonToDoTask = new InlineKeyboardButton(EmojiParser.parseToUnicode(":memo: Add ToDo Tasks"));
-                buttonToDoTask.setCallbackData("/addtask");
-                row.add(buttonToDoTask);
-                rows.add(row);
-                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
-
-
-                if (messageId == null) {
-                    return SendMessage
-                            .builder()
-                            .chatId(chat_id)
-                            .text("Your task list is empty!")
-                            .replyMarkup(inlineKeyboardMarkup)
-                            .build(); 
-                } else {
-                    return EditMessageText
+            
+                    List<InlineKeyboardRow> rows = new ArrayList<>();
+            
+                    InlineKeyboardRow row = new InlineKeyboardRow();
+                    InlineKeyboardRow row2 = new InlineKeyboardRow();
+            
+                    InlineKeyboardButton buttonToDoTask = new InlineKeyboardButton(EmojiParser.parseToUnicode(":memo: ToDo Tasks"));
+                    InlineKeyboardButton buttonInProgress = new InlineKeyboardButton(EmojiParser.parseToUnicode(":hourglass: InProgress"));
+                    InlineKeyboardButton buttonCompleted = new InlineKeyboardButton(EmojiParser.parseToUnicode(":white_check_mark: Completed"));
+                    buttonToDoTask.setCallbackData("GET_STATE_TASKS 0");
+                    buttonInProgress.setCallbackData("GET_STATE_TASKS 1");
+                    buttonCompleted.setCallbackData("GET_STATE_TASKS 2");
+            
+                    row.add(buttonToDoTask);
+                    row2.add(buttonInProgress);
+                    row2.add(buttonCompleted);
+            
+                    rows.add(row);
+                    rows.add(row2);
+            
+                    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
+            
+                    if (messageId == null) {
+                        return SendMessage
+                                .builder()
+                                .chatId(chat_id)
+                                .text(toDoTask + inProgressTask + completedTask)
+                                .replyMarkup(inlineKeyboardMarkup)
+                                .build();
+                    } else { 
+                        return EditMessageText
                                 .builder()
                                 .chatId(chat_id)
                                 .messageId(messageId)
+                                .text(toDoTask + inProgressTask + completedTask)
+                                .replyMarkup(inlineKeyboardMarkup)
+                                .build();
+                    }
+                } else {
+                    List<InlineKeyboardRow> rows = new ArrayList<>();
+                    InlineKeyboardRow row = new InlineKeyboardRow();
+                    InlineKeyboardButton buttonToDoTask = new InlineKeyboardButton(EmojiParser.parseToUnicode(":memo: Add ToDo Tasks"));
+                    buttonToDoTask.setCallbackData("/addtask");
+                    row.add(buttonToDoTask);
+                    rows.add(row);
+                    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
+    
+    
+                    if (messageId == null) {
+                        return SendMessage
+                                .builder()
+                                .chatId(chat_id)
                                 .text("Your task list is empty!")
                                 .replyMarkup(inlineKeyboardMarkup)
-                                .build();    
+                                .build(); 
+                    } else {
+                        return EditMessageText
+                                    .builder()
+                                    .chatId(chat_id)
+                                    .messageId(messageId)
+                                    .text("Your task list is empty!")
+                                    .replyMarkup(inlineKeyboardMarkup)
+                                    .build();    
+                    }
                 }
             }
-            
-        } catch (EntityNotFoundException e) {
-            loggerHandler.error("Entity not found", e);
-        } catch (Exception e) {
-            loggerHandler.error("General error", e);
         }
-        return null;
+        catch (NoResultException nre){
+            loggerHandler.error("not registered error", nre);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("You have not registered yet")
+                    .build();
+            return new_message;
+        }
+        catch (Exception e){
+            loggerHandler.error("General error", e);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+        }
     }
 }
 
