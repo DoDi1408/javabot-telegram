@@ -322,7 +322,7 @@ public class BotHandler {
                     return SendMessage
                             .builder()
                             .chatId(chat_id)
-                            .text("<b>" + teamName + "</b>" + "\n" + "<i>" + "Team Members: " + allEmployees.size() + "</i>" + "\n\n" + toDoTask + inProgressTask + completedTask)
+                            .text("<b>" + teamName + "</b>" + "\n" + "<i>" + "Team Members: " + allEmployees.size() + "</i>" + "\n" + toDoTask + inProgressTask + completedTask)
                             .parseMode("HTML")
                             .replyMarkup(inlineKeyboardMarkup)
                             .build();
@@ -331,7 +331,7 @@ public class BotHandler {
                             .builder()
                             .chatId(chat_id)
                             .messageId(messageId)
-                            .text("<b>" + teamName + "</b>" + "\n" + "<i>" + "Team Members: " + allEmployees.size() + "</i>" + "\n\n" + toDoTask + inProgressTask + completedTask)
+                            .text("<b>" + teamName + "</b>" + "\n" + "<i>" + "Team Members: " + allEmployees.size() + "</i>" + "\n" + toDoTask + inProgressTask + completedTask)
                             .parseMode("HTML")
                             .replyMarkup(inlineKeyboardMarkup)
                             .build();
