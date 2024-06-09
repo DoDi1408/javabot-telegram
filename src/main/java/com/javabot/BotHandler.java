@@ -265,6 +265,7 @@ public class BotHandler {
                 loggerHandler.info("MANAGER DETECTED, YOU CAN!! CHECK ALL TASKS OF YOUR TEAM");
                 
                 Integer teamID = manager.getTeam().getId();
+                String teamName = manager.getTeam().getNameTeam();
                 List<Employee> allEmployees = teamServiceImpl.teamEmployees(teamID);
                 List <Task> teamTasks = taskServiceImpl.allTeamTasks(teamID);
                 
@@ -321,7 +322,8 @@ public class BotHandler {
                     return SendMessage
                             .builder()
                             .chatId(chat_id)
-                            .text(toDoTask + inProgressTask + completedTask)
+                            .text("<b>" + teamName + "</b>" + "\n" + "<i>" + "Team Members: " + allEmployees.size() + "</i>" + "\n\n" + toDoTask + inProgressTask + completedTask)
+                            .parseMode("HTML")
                             .replyMarkup(inlineKeyboardMarkup)
                             .build();
                 } else { 
@@ -329,7 +331,8 @@ public class BotHandler {
                             .builder()
                             .chatId(chat_id)
                             .messageId(messageId)
-                            .text(toDoTask + inProgressTask + completedTask)
+                            .text("<b>" + teamName + "</b>" + "\n" + "<i>" + "Team Members: " + allEmployees.size() + "</i>" + "\n\n" + toDoTask + inProgressTask + completedTask)
+                            .parseMode("HTML")
                             .replyMarkup(inlineKeyboardMarkup)
                             .build();
                 }
