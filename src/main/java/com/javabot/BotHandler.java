@@ -377,14 +377,49 @@ public class BotHandler {
     }
     
     public SendMessage handleAddTask(long chat_id, Map<Long , String> userStatesMap){
-        userStatesMap.put(chat_id, "ADDING_TASK");
-        String addItem = "To add a task, simply send me a description that includes a title, a due date, and a start date. You can write the task in any format you like, and our AI will automatically fill in the necessary fields based on your input.";
-        SendMessage new_message = SendMessage
+        try {
+            Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chat_id);
+            try {
+                Manager man = managerServiceImpl.findByEmployeeId(modifyEmployee.getId());
+                loggerHandler.info(man.toString());
+                loggerHandler.info("MANAGER DETECTED, THOU CANT CHANGE TEAM");
+                SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text(addItem)
+                    .text("You are a manager! Managers can't change teams.")
                     .build();
-        return new_message;
+                return new_message;
+            }
+            catch (NoResultException e){
+                loggerHandler.info("Manager does not exist (Thats good)", e);
+                userStatesMap.put(chat_id, "ADDING_TASK");
+                String addItem = "To add a task, simply send me a description that includes a title, a due date, and a start date. You can write the task in any format you like, and our AI will automatically fill in the necessary fields based on your input.";
+                SendMessage new_message = SendMessage
+                            .builder()
+                            .chatId(chat_id)
+                            .text(addItem)
+                            .build();
+                return new_message;
+            }
+        }
+        catch (NoResultException nre){
+            loggerHandler.error("not registered error", nre);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("You have not registered yet")
+                    .build();
+            return new_message;
+        }
+        catch (Exception e){
+            loggerHandler.error("General error", e);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+        }
     }
 
     @SuppressWarnings("null")
