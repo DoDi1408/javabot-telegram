@@ -267,6 +267,23 @@ public class BotHandler {
                 Integer teamID = manager.getTeam().getId();
                 List<Employee> allEmployees = teamServiceImpl.teamEmployees(teamID);
                 List <Task> teamTasks = taskServiceImpl.allTeamTasks(teamID);
+                
+                //this might break XD sign by Erickson
+                if(allEmployees.size() == 1){
+                    return SendMessage
+                            .builder()
+                            .chatId(chat_id)
+                            .text("Oops! Looks like it's just you in your team. Time to recruit some teammates! ")
+                            .build();
+                }
+
+                if(teamTasks.size() == 0){
+                    return SendMessage
+                            .builder()
+                            .chatId(chat_id)
+                            .text("Wow, your team has no tasks! Looks like it's time for a coffee break. ")
+                            .build();
+                }
 
                 String toDoTask = EmojiParser.parseToUnicode("\nToDo tasks: :memo: \n");
                 String inProgressTask = EmojiParser.parseToUnicode("\nInProgress tasks: :hourglass: \n");
@@ -290,11 +307,13 @@ public class BotHandler {
                 List<InlineKeyboardRow> rows = new ArrayList<>();
 
                 for(Employee employee : allEmployees){
-                    InlineKeyboardRow row = new InlineKeyboardRow();
-                    InlineKeyboardButton button = new InlineKeyboardButton(employee.getFirstName());
-                    button.setCallbackData(BotCommands.GET_EMPLOYEE_TASK.getCommand() + " " + employee.getId());
-                    row.add(button);
-                    rows.add(row);
+                    if(employee.getFirstName() != modifyEmployee.getFirstName()){
+                        InlineKeyboardRow row = new InlineKeyboardRow();
+                        InlineKeyboardButton button = new InlineKeyboardButton(employee.getFirstName());
+                        button.setCallbackData(BotCommands.GET_EMPLOYEE_TASK.getCommand() + " " + employee.getId());
+                        row.add(button);
+                        rows.add(row);
+                    }
                 }
                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
 
@@ -324,12 +343,25 @@ public class BotHandler {
                     .build();
                 return new_message;
             }
-        } catch (EntityNotFoundException e) {
-            loggerHandler.error("Entity not found", e);
-        } catch (Exception e) {
-            loggerHandler.error("General error", e);
+        } 
+        catch (NoResultException nre){
+            loggerHandler.error("not registered error", nre);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("You have not registered yet")
+                    .build();
+            return new_message;
         }
-        return null;
+        catch (Exception e){
+            loggerHandler.error("General error", e);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+        }
     }
 
     public EditMessageText handleSendEmployeeTask(long chat_id, Integer employee_id, Integer message_id){
