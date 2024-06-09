@@ -172,6 +172,7 @@ public class EmployeeController {
             }
             for (Task task : tasks) {
                 task = taskServiceImpl.cleanUpForFront(task);
+                loggerEmpController.info("Due date " + task.getDueDate().toString());
             }
             return ResponseEntity.status(HttpStatus.OK).header("token", token).body(tasks);
         } 

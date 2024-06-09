@@ -607,6 +607,7 @@ public class BotHandler {
         
                 for (Task task : toDoList) {
                     String dueDate = task.getDueDate() != null ? task.getDueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() : "No due date";
+                    loggerHandler.info(task.getDueDate().toString());
 
                     if (task.getStateTask().equals(0)){
                         toDoTask = toDoTask + "- " + task.getTitle() + " | Due: " + dueDate + "\n";
