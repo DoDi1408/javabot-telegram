@@ -386,7 +386,7 @@ public class BotHandler {
                 SendMessage new_message = SendMessage
                     .builder()
                     .chatId(chat_id)
-                    .text("You are a manager! Managers can't change teams.")
+                    .text("You are a manager! Managers can't add tasks. However, you can view your team's tasks -> /teamlist.")
                     .build();
                 return new_message;
             }
