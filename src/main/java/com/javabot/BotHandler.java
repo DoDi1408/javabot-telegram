@@ -70,29 +70,52 @@ public class BotHandler {
     }
 
     public SendMessage handleRegistration(long chat_id){
-        SendMessage new_message = SendMessage
-        .builder()
-        .chatId(chat_id)
-        .text("Choose how you want to register: ")
-        .build();
+        try {
+            Employee modifyEmployee = employeeServiceImpl.findByTelegramId(chat_id);
+            loggerHandler.info("EMPLOYEE DETECTED");
+            SendMessage new_message = SendMessage
+                        .builder()
+                        .chatId(chat_id)
+                        .text("Whoa there! You’re already in the system. No need to sign up twice. Double the work, double the fun? Not here! Your username is " + modifyEmployee.getTelegramId())
+                        .build();
+            return new_message;
+            
+        }
+        catch (NoResultException nre){
+            loggerHandler.error("not registered", nre);
+            SendMessage new_message = SendMessage
+            .builder()
+            .chatId(chat_id)
+            .text("Choose how you want to register: ")
+            .build();
 
-        InlineKeyboardRow row = new InlineKeyboardRow();
-    
-        InlineKeyboardButton button1 = new InlineKeyboardButton("As Employee");
-        button1.setCallbackData(BotCommands.REGISTER_EMP_COMMAND.getCommand());
-        row.add(button1);
-    
-        InlineKeyboardButton button2 = new InlineKeyboardButton("As Manager");
-        button2.setCallbackData(BotCommands.REGISTER_MAN_COMMAND.getCommand());
-        row.add(button2);
-    
-        List<InlineKeyboardRow> rows = new ArrayList<>();
-        rows.add(row);
-    
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
-        new_message.setReplyMarkup(inlineKeyboardMarkup);
+            InlineKeyboardRow row = new InlineKeyboardRow();
+        
+            InlineKeyboardButton button1 = new InlineKeyboardButton("As Employee");
+            button1.setCallbackData(BotCommands.REGISTER_EMP_COMMAND.getCommand());
+            row.add(button1);
+        
+            InlineKeyboardButton button2 = new InlineKeyboardButton("As Manager");
+            button2.setCallbackData(BotCommands.REGISTER_MAN_COMMAND.getCommand());
+            row.add(button2);
+        
+            List<InlineKeyboardRow> rows = new ArrayList<>();
+            rows.add(row);
+        
+            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(rows);
+            new_message.setReplyMarkup(inlineKeyboardMarkup);
 
-        return new_message;
+            return new_message;
+        }
+        catch (Exception e){
+            loggerHandler.error("General error", e);
+            SendMessage new_message = SendMessage
+                    .builder()
+                    .chatId(chat_id)
+                    .text("500: Internal Server Error, sorry :(")
+                    .build();
+            return new_message;
+        }
     }
 
     public SendMessage handleRegistrationEmployee(long chat_id, User user){
