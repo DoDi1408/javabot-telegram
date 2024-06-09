@@ -307,7 +307,7 @@ public class BotHandler {
                 List<InlineKeyboardRow> rows = new ArrayList<>();
 
                 for(Employee employee : allEmployees){
-                    if(employee.getFirstName() != modifyEmployee.getFirstName()){
+                    if(employee.getTelegramId() != modifyEmployee.getTelegramId()){
                         InlineKeyboardRow row = new InlineKeyboardRow();
                         InlineKeyboardButton button = new InlineKeyboardButton(employee.getFirstName());
                         button.setCallbackData(BotCommands.GET_EMPLOYEE_TASK.getCommand() + " " + employee.getId());
