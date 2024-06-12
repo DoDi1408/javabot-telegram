@@ -56,7 +56,7 @@ public class BotHandler {
     }
 
     public SendMessage handleStart(long chat_id){
-        String startMessage = "Welcome to the " + "<b>" + "Oracle Task Manager Bot!" + "</b>" + "I'm here to help you stay organized and efficient at Oracle. If you're new to the bot, please register using the command:"
+        String startMessage = "Hello World. Welcome to the " + "<b>" + "Oracle Task Manager Bot!" + "</b>" + "I'm here to help you stay organized and efficient at Oracle. If you're new to the bot, please register using the command:"
         + "\n\n" + "/register - Register to use the bot (register as an employee or manager)" + "\n\n" + "<b>" + "Team Management" + "</b>" + "\n" + "/jointeam - List available teams to join or change" 
         + "\n\n" + "<b>" + "Task Management" + "</b>" + "\n" + "/todolist - List all tasks (To-Do, In Progress, Completed)" + "\n" +"/teamlist - (Managers only) List all your team's tasks" + "\n" + "/addtask - Add a new task to your list (provide a description; fields are filled using the OpenAI API)"
         + "\n\n" + "Remember, everything else can be managed using the inline buttons. Let's streamline your workflow and boost productivity together!";
